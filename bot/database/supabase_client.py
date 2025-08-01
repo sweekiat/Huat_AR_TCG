@@ -8,7 +8,7 @@ class SupabaseClient:
     def get_user_items(self, user_id: int):
         """Get all claimed items for a user"""
         try:
-            response = self.client.table('claims').select('*').eq('user_id', user_id).execute()
+            response = self.client.table('Claims').select('*').eq('user_id', user_id).execute()
             return response.data
         except Exception as e:
             print(f"Error fetching user items: {e}")
@@ -28,7 +28,7 @@ class SupabaseClient:
         """Get invoice data for a user"""
         try:
             # This is a placeholder - adjust based on your invoice logic
-            response = self.client.table('invoices').select('*').eq('user_id', user_id).execute()
+            response = self.client.table('Invoices').select('*').eq('user_id', user_id).execute()
             return response.data
         except Exception as e:
             print(f"Error fetching invoice data: {e}")
