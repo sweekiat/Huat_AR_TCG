@@ -2,16 +2,16 @@ import pandas as pd
 # got this by running the script and sending it to chatgpt
 set_dictionary = {
     "sv4m": "Future Flash",                     # Japanese Scarlet & Violet expansion
-    "sv9": "Journey Together",                 # Japanese Scarlet & Violet expansion
+    "sv9": "Battle Partners",                 # Japanese Scarlet & Violet expansion
     "sv8": "Super Electric Breaker",           # Japanese Scarlet & Violet expansion
     "sv1a": "Triplet Beat",                    # Japanese Scarlet & Violet expansion
-    "sv9a": "Hot Air Arena",                   # Japanese Scarlet & Violet expansion
+    "sv9a": "Heat Wave Arena",                   # Japanese Scarlet & Violet expansion
     "sv2a": "Pokemon Card 151",                # Japanese Scarlet & Violet expansion
     "sv3a": "Raging Surf",                    # Japanese Scarlet & Violet enhanced expansion
     "sv6a": "Night Wanderer",                 # Japanese Scarlet & Violet enhanced expansion
     "sv2d": "Clay Burst",                     # Japanese Scarlet & Violet expansion
     "sv1s": "Scarlet ex",                     # Japanese Scarlet & Violet main expansion (Scarlet ex)
-    "sv10": "Destined Rivals",                # Japanese Scarlet & Violet expansion
+    "sv10": "Glory of Team Rocket",                # Japanese Scarlet & Violet expansion
     "sv3": "Ruler of the Black Flame",        # Japanese Scarlet & Violet expansion
     "s12a": "VSTAR Universe",                 # Japanese Sword & Shield high class / subset
     "sv5m": "Cyber Judge",                    # Japanese Scarlet & Violet expansion
