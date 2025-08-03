@@ -29,10 +29,13 @@ set_dictionary = {
 }
 
 # Read the CSV file
-df = pd.read_csv('inventory.csv')
+inventory_df = pd.read_csv('inventory.csv')
+card_name_df = pd.read_csv('card_codes_names.csv')
+
 
 # Split the card_code column and create new columns
-df[['set_code', 'card_number']] = df['card_code'].str.split('-', expand=True)
+# inventory_df[['set_code', 'card_number']] = inventory_df['card_code'].str.split('-', expand=True)
+card_name_df['set_name'] = card_name_df['card_code'].apply(lambda x: set_dictionary.get(x.split('-')[0], 'Unknown Set'))
 
 
 # used to create dictionary from set_code
@@ -43,3 +46,5 @@ df[['set_code', 'card_number']] = df['card_code'].str.split('-', expand=True)
 #     for key, value in set_dictionary.items():
 #         f.write(f"'{key}': {value}\n")
 
+with open('card_collection.csv', 'w') as f:
+    card_name_df.to_csv(f, index=False)
