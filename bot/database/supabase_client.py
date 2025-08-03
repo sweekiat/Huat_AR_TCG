@@ -33,6 +33,25 @@ class SupabaseClient:
         except Exception as e:
             print(f"Error fetching invoice data: {e}")
             return []
-
+    def get_listings(self):
+        """Get all listings from the database"""
+        try:
+            response = self.client.table('Listings').select('*').execute()
+            return response.data
+        except Exception as e:
+            print(f"Error fetching listings: {e}")
+            return []
+    def add_claim(self, user_id: int, card_code: str):
+        """Add a claim for a user"""
+        try:
+            response = self.client.table('Claims').insert({
+                'user_id': user_id,
+                'quantity': 1,  
+                'card_code': card_code
+            }).execute()
+            return response.data
+        except Exception as e:
+            print(f"Error adding claim: {e}")
+            return None
 # Initialize global database client
 db = SupabaseClient()

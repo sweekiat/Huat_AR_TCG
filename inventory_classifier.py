@@ -29,13 +29,15 @@ set_dictionary = {
 }
 
 # Read the CSV file
-inventory_df = pd.read_csv('inventory.csv')
-card_name_df = pd.read_csv('card_codes_names.csv')
-
+# inventory_df = pd.read_csv('inventory.csv')
+# card_name_df = pd.read_csv('card_codes_names.csv')
+listings_collection_df = pd.read_csv('listings_collection1.csv')
+listings_collection_df[["card_code","listed_quantity","price"]].to_csv('listings_collection1.csv', index=False)
+# listings_collection_df[]
 
 # Split the card_code column and create new columns
 # inventory_df[['set_code', 'card_number']] = inventory_df['card_code'].str.split('-', expand=True)
-card_name_df['set_name'] = card_name_df['card_code'].apply(lambda x: set_dictionary.get(x.split('-')[0], 'Unknown Set'))
+# card_name_df['set_name'] = card_name_df['card_code'].apply(lambda x: set_dictionary.get(x.split('-')[0], 'Unknown Set'))
 
 
 # used to create dictionary from set_code
@@ -46,5 +48,12 @@ card_name_df['set_name'] = card_name_df['card_code'].apply(lambda x: set_diction
 #     for key, value in set_dictionary.items():
 #         f.write(f"'{key}': {value}\n")
 
-with open('card_collection.csv', 'w') as f:
-    card_name_df.to_csv(f, index=False)
+# with open('listings_collection1.csv', 'w') as f:
+#     # Read the CSV file line by line and filter lines with exactly 5 comma-separated items
+#     with open('listings_collection.csv', 'r') as input_file:
+#         for line in input_file:
+#             # Split the line by comma and check if it has exactly 5 items
+#             items = line.strip().split(',')
+#             if len(items) == 5:
+#                 f.write(line)
+

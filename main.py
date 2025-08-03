@@ -22,7 +22,7 @@ def main():
     application.add_handler(CommandHandler("start", start_command))
     application.add_handler(CommandHandler("list", list_command))
     application.add_handler(CommandHandler("invoice", invoice_command))
-    
+    application.add_handler(CommandHandler("claim", claim_command))  
     # Start the bot
     logger.info("Starting Huat_AR_tcg bot...")
     application.run_polling(allowed_updates=Update.ALL_TYPES)

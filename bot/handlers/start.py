@@ -10,7 +10,6 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user_exists = db.user_exists(
         user_id=user.id,
         username=user.username,
-        first_name=user.first_name
     )
     
     welcome_message = f"""Hello {user.username}! Welcome to Huat_AR_tcg.
