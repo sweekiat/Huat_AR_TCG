@@ -3,12 +3,24 @@ from telegram.ext import ContextTypes
 from bot.database.supabase_client import db
 
 async def claim_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle claim command"""
+    """Handle claim message (not command)"""
     user = update.effective_user
     
-    # Create user record if it doesn't exist
-    user_exists = db.add_claim(user_id=user.id,card_code=card_code)
+    # Debug prints
+    print(f"Message exists: {update.message is not None}")
+    print(f"Reply to message exists: {update.message.reply_to_message is not None}")
     
-
-
-    # await update.message.reply_text(welcome_message)
+    # Get the message being replied to
+    if update.message.reply_to_message:
+        original_message = update.message.reply_to_message
+        card_code = original_message.text
+        
+        # Additional debug info
+        print(f"Original message text: '{card_code}'")
+        
+        await update.message.reply_text(f"✅ Detected reply to message: {card_code}")
+    else:
+        await update.message.reply_text("Please reply to a message to claim a card.")
+        return
+    
+    print(f"User ID: {user.id}, Card Code: {card_code}")
