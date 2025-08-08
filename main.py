@@ -2,10 +2,12 @@ import logging
 from telegram import Update
 from telegram.ext import Application, CommandHandler
 from bot.config import TELEGRAM_BOT_TOKEN
+from bot.handlers.add_listing import add_listing_command
 from bot.handlers.start import start_command
 from bot.handlers.list import list_command
 from bot.handlers.invoice import invoice_command
 from bot.handlers.claim import claim_command
+from bot.handlers.external_invoice import external_invoice_command
 from telegram.ext import MessageHandler, filters
 
 # Enable logging
@@ -24,7 +26,10 @@ def main():
     application.add_handler(CommandHandler("start", start_command))
     application.add_handler(CommandHandler("list", list_command))
     application.add_handler(CommandHandler("invoice", invoice_command))
-    application.add_handler(MessageHandler(filters.TEXT & filters.Regex(r'^claim$'), claim_command))
+    application.add_handler(MessageHandler(filters.TEXT & filters.Regex(r'^claim\s+\d+$'), claim_command))
+    application.add_handler(CommandHandler("external", external_invoice_command)) 
+    application.add_handler(CommandHandler("add_listing", add_listing_command)) 
+
     # Start the bot
     logger.info("Starting Huat_AR_tcg bot...")
     application.run_polling(allowed_updates=Update.ALL_TYPES)

@@ -5,18 +5,35 @@ from bot.database.supabase_client import db
 async def claim_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle claim message (not command)"""
     user = update.effective_user
-    
-    # Debug prints
-    print(f"Message exists: {update.message is not None}")
-    print(f"Reply to message exists: {update.message.reply_to_message is not None}")
-    
-    # Get the message being replied to
+    message_text = update.message.text
+    user_exists = db.check_user_exists(user.id)
+    if not user_exists:
+        create_user_success = db.create_user(user.id)
+        if not create_user_success:
+            await update.message.reply_text("Failed to create user record. Please try again later.")
+            return
+        return
+
     if update.message.reply_to_message:
         original_message = update.message.reply_to_message
-        card_code = original_message.text
+        first_line_of_message = original_message.text.split('\n')[0]
+        listing_number = first_line_of_message.strip("#")[-1]
+        if not listing_number.isdigit():
+            await update.message.reply_text("No listing number found in the replied message.")
+            return
+        # TODO get a listing type that u can strictly type it to
+        listing_details = db.get_listing(listing_number)
+        if not listing_details:
+            await update.message.reply_text("Listing not found.")
+            return
+        card_code = listing_details.get('card_code', 'Unknown Card')
+        quantity = 1 if message_text.split()[-1].isdigit() else 1  # Default to 1 if no quantity specified
+
+        add_claim_response = db.add_claim(user.id, card_code, quantity)
+        if not add_claim_response:
+            await update.message.reply_text("Failed to claim the card. Please try again later.")
+            return
         
-        # Additional debug info
-        print(f"Original message text: '{card_code}'")
         
         await update.message.reply_text(f"✅ Detected reply to message: {card_code}")
     else:

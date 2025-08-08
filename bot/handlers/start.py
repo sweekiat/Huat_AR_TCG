@@ -7,7 +7,7 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     user = update.effective_user
     
     # Create user record if it doesn't exist
-    user_exists = db.user_exists(
+    user_exists = db.check_user_exists(
         user_id=user.id,
         username=user.username,
     )
