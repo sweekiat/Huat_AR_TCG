@@ -1,10 +1,11 @@
 from supabase import create_client, Client
-from bot.config import SUPABASE_URL, SUPABASE_KEY
+from bot.config import SUPABASE_URL, SUPABASE_KEY, SUPABASE_SERVICE_KEY
 
 class SupabaseClient:
     def __init__(self):
-        self.client: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
-    
+        # self.client: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
+        self.client: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
+
     def get_user_items(self, user_id: int):
         """Get all claimed items for a user"""
         try:
@@ -18,7 +19,7 @@ class SupabaseClient:
         """Check if user record exists"""
         try:
             # Check if user exists
-            existing = self.client.table('Users').select('*').eq('user_id', user_id).execute()
+            existing = (self.client.table("Users").select("*").eq("user_id", user_id).execute())
             return bool(existing.data)
         except Exception as e:
             print(f"Error checking user existence: {e}")
