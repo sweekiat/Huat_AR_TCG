@@ -15,6 +15,14 @@ class SupabaseClient:
         except Exception as e:
             print(f"Error fetching user items: {e}")
             return []
+    def get_claimed_quantity(self, listing_id: int):
+        """Get total claimed quantity for a listing"""
+        try:
+            response = self.client.table('Claims').select('claim_id').eq('listing_id', listing_id).execute()
+            return response.data.count() if response.data else 0
+        except Exception as e:
+            print(f"Error fetching claimed quantity: {e}")
+            return 0
     
     def check_user_exists(self, user_id: int):
         """Check if user record exists"""
