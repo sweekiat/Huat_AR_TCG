@@ -34,13 +34,13 @@ async def claim_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         print(f"Listing details: {listing_details}")
         card_code = listing_details.get('card_code', 'Unknown Card')
         quantity = message_text.split()[-1] if message_text.split()[-1].isdigit() else 1  # Default to 1 if no quantity specified
-        add_claim_response = db.add_claim(user.id, card_code, quantity)
+        add_claim_response = db.add_claim(user.id, card_code, int(quantity))
         if not add_claim_response:
-            await update.message.reply_text("Failed to claim the card. Please try again later.")
+            await update.message.reply_text(f"Failed to claim the card. Please try again later. {add_claim_response}")
             return
         
         
-        await update.message.reply_text(f"✅ Detected reply to message: {card_code}")
+        await update.message.reply_text(f"✅ Successfully claimed: {card_code}")
     else:
         await update.message.reply_text("Please reply to a message to claim a card.")
         return

@@ -18,7 +18,8 @@ async def list_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     items_text = "Your claimed items:\n\n"
     for i, item in enumerate(items, 1):
         # Adjust these fields based on your database schema
-        item_name = item.get('card_name', 'Unknown Item')
+        item_name = item.get('Cards', {}).get('card_name', 'Unknown Item')
+        set_name = item.get('Cards', {}).get('set_name', 'Unknown Set')
         claim_date = item.get('created_at', 'Unknown Date')
         # Format the date to a simpler format
         if claim_date and claim_date != 'Unknown Date':
@@ -29,8 +30,9 @@ async def list_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             except:
                 # Keep original if parsing fails
                 pass
-        items_text += f"{i}. {item_name} (claimed: {claim_date})\n"
-    
+        items_text += f"{i}. {item_name}, {set_name} (claimed: {claim_date})\n"
+        
+
     items_text += "\nUse /invoice to generate your invoice."
     
     await update.message.reply_text(items_text)

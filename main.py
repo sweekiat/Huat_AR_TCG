@@ -10,6 +10,8 @@ from bot.handlers.claim import claim_command
 from bot.handlers.external_invoice import external_invoice_command
 from telegram.ext import MessageHandler, filters
 
+from bot.handlers.unclaim import unclaim_command
+
 # Enable logging
 logging.basicConfig(
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',

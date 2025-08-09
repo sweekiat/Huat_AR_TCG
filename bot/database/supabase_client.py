@@ -9,7 +9,8 @@ class SupabaseClient:
     def get_user_items(self, user_id: int):
         """Get all claimed items for a user"""
         try:
-            response = self.client.table('Claims').select('*').eq('user_id', user_id).eq('paid',False).execute()
+            # response = self.client.table('Claims').select('*').eq('user_id', user_id).eq('paid',False).execute()
+            response = self.client.table('Claims').select('*, Cards(card_name, set_name)').eq('user_id', user_id).eq('paid', False).execute()
             return response.data
         except Exception as e:
             print(f"Error fetching user items: {e}")
@@ -75,6 +76,7 @@ class SupabaseClient:
             return None
     def remove_claim(self, user_id: int, card_code: str, quantity: int = 0):
         """Remove a claim for a user"""
+        response = None
         try:
             if quantity == 0:
                 # If quantity is 0, remove all claims for this user and card_code
@@ -84,6 +86,8 @@ class SupabaseClient:
                 current_claim = self.client.table('Claims').select('*').eq('user_id', user_id).eq('card_code', card_code).execute()
                 if current_claim.data:
                     current_quantity = current_claim.data[0]['quantity']
+                    print(type(current_quantity))
+                    print(type(quantity))
                     new_quantity = max(0, current_quantity - quantity)
                     if new_quantity == 0:
                         # Remove the claim if quantity becomes 0
@@ -92,7 +96,8 @@ class SupabaseClient:
                         # Update the quantity
                         response = self.client.table('Claims').update({'quantity': new_quantity}).eq('user_id', user_id).eq('card_code', card_code).execute()
                 else:
-                    return None
+                    return response
+            return response
         except Exception as e:
             print(f"Error removing claim: {e}")
             return None

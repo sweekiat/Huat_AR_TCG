@@ -5,7 +5,6 @@ from bot.database.supabase_client import db
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle /start command"""
     user = update.effective_user
-    print(user.id)
     # Create user record if it doesn't exist
     user_exists = db.check_user_exists(
         user_id=user.id,
