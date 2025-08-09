@@ -26,9 +26,11 @@ def main():
     application.add_handler(CommandHandler("start", start_command))
     application.add_handler(CommandHandler("list", list_command))
     application.add_handler(CommandHandler("invoice", invoice_command))
-    application.add_handler(MessageHandler(filters.TEXT & filters.Regex(r'^claim\s+\d+$'), claim_command))
-    application.add_handler(CommandHandler("external", external_invoice_command)) 
+    application.add_handler(MessageHandler(filters.TEXT & filters.Regex(r'^claim(\s+\d+)?$'), claim_command))
+    application.add_handler(MessageHandler(filters.TEXT & filters.Regex(r'^unclaim(\s+\d+)?$'), unclaim_command))
+    application.add_handler(CommandHandler("external_invoice", external_invoice_command)) 
     application.add_handler(CommandHandler("add_listing", add_listing_command)) 
+    # do i need a yours command handler? so that i can change and alter the claim amount
 
     # Start the bot
     logger.info("Starting Huat_AR_tcg bot...")

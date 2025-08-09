@@ -55,6 +55,15 @@ class SupabaseClient:
     def add_claim(self, user_id: int, card_code: str, quantity: int = 1):
         """Add a claim for a user"""
         try:
+            # Check if the user already has a claim for this card
+            existing_claim = self.client.table('Claims').select('*').eq('user_id', user_id).eq('card_code', card_code).execute()
+            if existing_claim.data:
+                # If a claim exists, update the quantity
+                current_quantity = existing_claim.data[0]['quantity']
+                new_quantity = current_quantity + quantity
+                response = self.client.table('Claims').update({'quantity': new_quantity}).eq('user_id', user_id).eq('card_code', card_code).execute()
+                return response.data
+            # If no claim exists, create a new one
             response = self.client.table('Claims').insert({
                 'user_id': user_id,
                 'quantity': quantity,  
@@ -63,6 +72,29 @@ class SupabaseClient:
             return response.data
         except Exception as e:
             print(f"Error adding claim: {e}")
+            return None
+    def remove_claim(self, user_id: int, card_code: str, quantity: int = 0):
+        """Remove a claim for a user"""
+        try:
+            if quantity == 0:
+                # If quantity is 0, remove all claims for this user and card_code
+                response = self.client.table('Claims').delete().eq('user_id', user_id).eq('card_code', card_code).execute()
+            else:
+                # Get current claim to update quantity
+                current_claim = self.client.table('Claims').select('*').eq('user_id', user_id).eq('card_code', card_code).execute()
+                if current_claim.data:
+                    current_quantity = current_claim.data[0]['quantity']
+                    new_quantity = max(0, current_quantity - quantity)
+                    if new_quantity == 0:
+                        # Remove the claim if quantity becomes 0
+                        response = self.client.table('Claims').delete().eq('user_id', user_id).eq('card_code', card_code).execute()
+                    else:
+                        # Update the quantity
+                        response = self.client.table('Claims').update({'quantity': new_quantity}).eq('user_id', user_id).eq('card_code', card_code).execute()
+                else:
+                    return None
+        except Exception as e:
+            print(f"Error removing claim: {e}")
             return None
     def create_new_invoice(self):
         """Create a new invoice"""
@@ -79,7 +111,7 @@ class SupabaseClient:
     def get_listing(self, listing_id: int):
         """Get a specific listing by ID"""
         try:
-            response = self.client.table('Listings').select('*').eq('id', listing_id).execute()
+            response = self.client.table('Listings').select('*').eq('listing_id', listing_id).execute()
             return response.data[0] if response.data else None
         except Exception as e:
             print(f"Error fetching listing: {e}")

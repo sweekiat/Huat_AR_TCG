@@ -2,7 +2,7 @@ from telegram import Update
 from telegram.ext import ContextTypes
 from bot.database.supabase_client import db
 
-async def claim_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
+async def unclaim_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle claim message (not command)"""
     print("Claim command triggered")
     user = update.effective_user
@@ -34,7 +34,7 @@ async def claim_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         print(f"Listing details: {listing_details}")
         card_code = listing_details.get('card_code', 'Unknown Card')
         quantity = message_text.split()[-1] if message_text.split()[-1].isdigit() else 1  # Default to 1 if no quantity specified
-        add_claim_response = db.add_claim(user.id, card_code, quantity)
+        add_claim_response = db.remove_claim(user.id, card_code, quantity)
         if not add_claim_response:
             await update.message.reply_text("Failed to claim the card. Please try again later.")
             return

@@ -1,6 +1,7 @@
 from telegram import Update
 from telegram.ext import ContextTypes
 from bot.database.supabase_client import db
+from datetime import datetime
 
 async def list_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle /list command"""
@@ -17,8 +18,19 @@ async def list_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     items_text = "Your claimed items:\n\n"
     for i, item in enumerate(items, 1):
         # Adjust these fields based on your database schema
-        item_name = item.get('name', 'Unknown Item')
+        item_name = item.get('card_name', 'Unknown Item')
         claim_date = item.get('created_at', 'Unknown Date')
+        # Format the date to a simpler format
+        if claim_date and claim_date != 'Unknown Date':
+            try:
+                # Parse the ISO format date and convert to simple format
+                parsed_date = datetime.fromisoformat(claim_date.replace('Z', '+00:00'))
+                claim_date = parsed_date.strftime('%Y-%m-%d %H:%M')
+            except:
+                # Keep original if parsing fails
+                pass
         items_text += f"{i}. {item_name} (claimed: {claim_date})\n"
+    
+    items_text += "\nUse /invoice to generate your invoice."
     
     await update.message.reply_text(items_text)
