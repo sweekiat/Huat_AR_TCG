@@ -9,6 +9,7 @@ async def list_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     # Get user's claimed items from database
     items = db.get_user_items(user_id)
+    print(items)
     
     if not items:
         await update.message.reply_text("You haven't claimed any items yet!")
@@ -16,10 +17,12 @@ async def list_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     # Format the items list
     items_text = "Your claimed items:\n\n"
+    total_price = 0.0
     for i, item in enumerate(items, 1):
         # Adjust these fields based on your database schema
         item_name = item.get('Cards', {}).get('card_name', 'Unknown Item')
         set_name = item.get('Cards', {}).get('set_name', 'Unknown Set')
+        price = item.get('Listings', {}).get('price', 'Unknown Price') if item.get('discounted_price') is None else item.get('discounted_price')
         claim_date = item.get('created_at', 'Unknown Date')
         # Format the date to a simpler format
         if claim_date and claim_date != 'Unknown Date':
@@ -31,8 +34,10 @@ async def list_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 # Keep original if parsing fails
                 pass
         items_text += f"{i}. {item_name}, {set_name} (claimed: {claim_date})\n"
-        
+        items_text += f"   Price: {price}\n"
+        total_price += float(price) if isinstance(price, (int, float)) else 0.0
 
+    items_text += f"\nTotal Price: ${total_price}\n"
     items_text += "\nUse /invoice to generate your invoice."
     
     await update.message.reply_text(items_text)

@@ -20,21 +20,21 @@ async def claim_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         original_message = update.message.reply_to_message
         first_line_of_message = original_message.text.split('\n')[0]
         print(f"Original message text: {first_line_of_message}")
-        listing_number = first_line_of_message.strip("#")
-        print(f"Extracted listing number: {listing_number}")
-        if not listing_number.isdigit():
-            await update.message.reply_text("No listing number found in the replied message.")
+        listing_id = first_line_of_message.strip("#")
+        print(f"Extracted listing number: {listing_id}")
+        if not listing_id.isdigit():
+            await update.message.reply_text("Could not find a valid listing number in the replied message. This is a personal item.")
             return
         
 
-        listing_details = db.get_listing(listing_number)
+        listing_details = db.get_listing(int(listing_id))
         if not listing_details:
             await update.message.reply_text("Listing not found.")
             return
         print(f"Listing details: {listing_details}")
         card_code = listing_details.get('card_code', 'Unknown Card')
         quantity = message_text.split()[-1] if message_text.split()[-1].isdigit() else 1  # Default to 1 if no quantity specified
-        add_claim_response = db.add_claim(user.id, card_code, int(quantity))
+        add_claim_response = db.add_claim(user.id, card_code, int(quantity), listing_id)
         if not add_claim_response:
             await update.message.reply_text(f"Failed to claim the card. Please try again later. {add_claim_response}")
             return

@@ -20,14 +20,13 @@ async def unclaim_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         original_message = update.message.reply_to_message
         first_line_of_message = original_message.text.split('\n')[0]
         print(f"Original message text: {first_line_of_message}")
-        listing_number = first_line_of_message.strip("#")
-        print(f"Extracted listing number: {listing_number}")
-        if not listing_number.isdigit():
-            await update.message.reply_text("No listing number found in the replied message.")
+        listing_id = first_line_of_message.strip("#")
+        print(f"Extracted listing ID: {listing_id}")
+        if not listing_id.isdigit():
+            await update.message.reply_text("No listing ID found in the replied message. This is a personal item.")
             return
-        
 
-        listing_details = db.get_listing(listing_number)
+        listing_details = db.get_listing(int(listing_id))
         if not listing_details:
             await update.message.reply_text("Listing not found.")
             return

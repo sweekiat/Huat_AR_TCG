@@ -10,7 +10,7 @@ class SupabaseClient:
         """Get all claimed items for a user"""
         try:
             # response = self.client.table('Claims').select('*').eq('user_id', user_id).eq('paid',False).execute()
-            response = self.client.table('Claims').select('*, Cards(card_name, set_name)').eq('user_id', user_id).eq('paid', False).execute()
+            response = self.client.table('Claims').select('*, Cards(card_name, set_name), Listings(listing_id, price)').eq('user_id', user_id).eq('paid', False).execute()
             return response.data
         except Exception as e:
             print(f"Error fetching user items: {e}")
@@ -53,7 +53,7 @@ class SupabaseClient:
         except Exception as e:
             print(f"Error fetching listings: {e}")
             return []
-    def add_claim(self, user_id: int, card_code: str, quantity: int = 1):
+    def add_claim(self, user_id: int, card_code: str, quantity: int = 1, listing_id: str = None):
         """Add a claim for a user"""
         try:
             # Check if the user already has a claim for this card
@@ -68,7 +68,8 @@ class SupabaseClient:
             response = self.client.table('Claims').insert({
                 'user_id': user_id,
                 'quantity': quantity,  
-                'card_code': card_code
+                'card_code': card_code,
+                'listing_id': listing_id
             }).execute()
             return response.data
         except Exception as e:
