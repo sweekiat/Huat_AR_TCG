@@ -19,7 +19,6 @@ async def claim_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     if update.message.reply_to_message:
         original_message = update.message.reply_to_message
         first_line_of_message = original_message.text.split('\n')[0] if original_message.text else original_message.caption.split('\n')[0]
-        print(f"Original message text: {first_line_of_message}")
         listing_id = first_line_of_message.strip("#")
         print(f"Extracted listing number: {listing_id}")
         if not listing_id.isdigit():
