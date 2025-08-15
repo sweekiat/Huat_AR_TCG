@@ -138,7 +138,15 @@ class SupabaseClient:
                 'listed_quantity': listed_quantity,
                 'price': price
             }).execute()
-            return response.data
+            card_info = self.client.table('Cards').select('*').eq('card_code', card_code).execute()
+            if card_info.data:
+                return {
+                    **response.data[0],
+                    'card': card_info.data[0]['card_name'] # or card_info.data[0]['card_name'] if you only want name
+                }
+            else:
+                return response.data[0]
+            
         except Exception as e:
             print(f"Error adding listing: {e}")
             return None

@@ -18,7 +18,7 @@ async def claim_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     if update.message.reply_to_message:
         original_message = update.message.reply_to_message
-        first_line_of_message = original_message.text.split('\n')[0]
+        first_line_of_message = original_message.text.split('\n')[0] if original_message.text else original_message.caption.split('\n')[0]
         print(f"Original message text: {first_line_of_message}")
         listing_id = first_line_of_message.strip("#")
         print(f"Extracted listing number: {listing_id}")
@@ -32,6 +32,7 @@ async def claim_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.message.reply_text("Listing not found.")
             return
         already_claimed_quantity = db.get_claimed_quantity(int(listing_id))
+        print(f"Already claimed quantity: {already_claimed_quantity}")
         listed_quantity = listing_details.get('listed_quantity', 0)
         
         card_code = listing_details.get('card_code', 'Unknown Card')

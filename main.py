@@ -3,6 +3,7 @@ from telegram import Update
 from telegram.ext import Application, CommandHandler
 from bot.config import TELEGRAM_BOT_TOKEN
 from bot.handlers.add_listing import add_listing_command
+from bot.handlers.debugger import debug_all_messages
 from bot.handlers.start import start_command
 from bot.handlers.list import list_command
 from bot.handlers.invoice import invoice_command
@@ -32,6 +33,7 @@ def main():
     application.add_handler(MessageHandler(filters.TEXT & filters.Regex(r'^unclaim(\s+\d+)?$'), unclaim_command))
     application.add_handler(CommandHandler("external_invoice", external_invoice_command)) 
     application.add_handler(CommandHandler("add_listing", add_listing_command)) 
+    # application.add_handler(MessageHandler(filters.ALL, debug_all_messages))
     # do i need a yours command handler? so that i can change and alter the claim amount
 
     # Start the bot
