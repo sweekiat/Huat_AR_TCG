@@ -6,7 +6,7 @@ from bot.handlers.add_listing import add_listing_command
 from bot.handlers.debugger import debug_all_messages
 from bot.handlers.start import start_command
 from bot.handlers.list import list_command
-from bot.handlers.invoice import invoice_command
+from bot.handlers.invoice import invoice_conversation
 from bot.handlers.claim import claim_command
 from bot.handlers.external_invoice import external_invoice_command
 from telegram.ext import MessageHandler, filters
@@ -24,11 +24,12 @@ def main():
     """Start the bot"""
     # Create the Application
     application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
+    # Create the conversation handler
     
     # Add command handlers
     application.add_handler(CommandHandler("start", start_command))
     application.add_handler(CommandHandler("list", list_command))
-    application.add_handler(CommandHandler("invoice", invoice_command))
+    application.add_handler(invoice_conversation)
     application.add_handler(MessageHandler(filters.TEXT & filters.Regex(r'^claim(\s+\d+)?$'), claim_command))
     application.add_handler(MessageHandler(filters.TEXT & filters.Regex(r'^unclaim(\s+\d+)?$'), unclaim_command))
     application.add_handler(CommandHandler("external_invoice", external_invoice_command)) 

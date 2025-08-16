@@ -31,7 +31,7 @@ async def claim_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         already_claimed_quantity = db.get_claimed_quantity(int(listing_id))
         print(f"Already claimed quantity: {already_claimed_quantity}")
         listed_quantity = listing_details.get('listed_quantity', 0)
-        sold_quantity = listing_details.get('sold',0)
+        sold_quantity = 0 if listing_details.get('sold',0) == None else listing_details.get('sold', 0)
 
         card_code = listing_details.get('card_code', 'Unknown Card')
         quantity = message_text.split()[-1] if message_text.split()[-1].isdigit() else 1  

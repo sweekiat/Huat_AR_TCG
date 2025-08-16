@@ -5,7 +5,7 @@ from bot.util.admin_wrapper import admin_required
 
 @admin_required
 async def yours_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    # """Handle yours command"""
+    """Handle yours command"""
     # # Get listing data from command arguments
     # if len(context.args) < 3:
     #     await update.message.reply_text("Usage: /yours <user> <price>")

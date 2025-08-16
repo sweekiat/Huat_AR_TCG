@@ -61,7 +61,8 @@ class SupabaseClient:
         except Exception as e:
             print(f"Error fetching listings: {e}")
             return []
-    def add_claim(self, user_id: int, card_code: str, quantity: int = 1, listing_id: str = None):
+
+    def add_claim(self, user_id: int, card_code: str, quantity: int = 1, listing_id: str = None, discounted_price: float = 0):
         """Add a claim for a user"""
         try:
             # Check if the user already has a claim for this card
@@ -77,12 +78,14 @@ class SupabaseClient:
                 'user_id': user_id,
                 'quantity': quantity,  
                 'card_code': card_code,
-                'listing_id': listing_id
+                'listing_id': listing_id,
+                'discounted_price': discounted_price
             }).execute()
             return response.data
         except Exception as e:
             print(f"Error adding claim: {e}")
             return None
+
     def remove_claim(self, user_id: int, card_code: str, quantity: int = 0):
         """Remove a claim for a user"""
         response = None
@@ -95,8 +98,6 @@ class SupabaseClient:
                 current_claim = self.client.table('Claims').select('*').eq('user_id', user_id).eq('card_code', card_code).execute()
                 if current_claim.data:
                     current_quantity = current_claim.data[0]['quantity']
-                    print(type(current_quantity))
-                    print(type(quantity))
                     new_quantity = max(0, current_quantity - quantity)
                     if new_quantity == 0:
                         # Remove the claim if quantity becomes 0
