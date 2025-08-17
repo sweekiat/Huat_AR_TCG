@@ -14,6 +14,8 @@ async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 Here are the commands I can respond to:
 /list - Lists all of your claimed items
-/invoice - Generates your invoice""" if user_exists else f"It seems like you have not claimed any items {user.username} {user.id}. Do check us out at @Huat_AR_TCG."
+/invoice - Generates your invoice
+/edit_user - Edit your user information
+""" if user_exists else f"It seems like you have not claimed any items. Do check us out at @Huat_AR_TCG."
 
     await update.message.reply_text(welcome_message)

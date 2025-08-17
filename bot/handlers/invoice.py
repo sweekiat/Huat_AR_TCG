@@ -64,6 +64,7 @@ async def handle_delivery_choice(update: Update, context: ContextTypes.DEFAULT_T
         await query.edit_message_text(
             "🚚 **Delivery Selected**\n\n"
             "📍 Please type your delivery address:"
+            
         )
         return WAITING_FOR_ADDRESS
         
@@ -177,7 +178,4 @@ invoice_conversation = ConversationHandler(
         ],
     },
     fallbacks=[CommandHandler('cancel', cancel_invoice)],
-    # per_message=True,  # Add this line
-    # per_chat=True,     # Add this line (optional but recommended)
-    # per_user=True,     # Add this line (optional but recommended)
 )
