@@ -149,14 +149,19 @@ class SupabaseClient:
             print(f"Error removing claim: {e}")
             return None
 #### Invoices table ####
-    def create_new_invoice(self):
+    def create_new_invoice(self, invoice_object: dict):
         """Create a new invoice"""
         try:
             # This is a placeholder - adjust based on your invoice creation logic
-            response = self.client.table('Invoices').insert({
-                'user_id': 1,  # Example user_id, replace with actual logic
-                'amount': 0.0  # Placeholder amount
-            }).execute()
+            response = self.client.table('Invoices').insert(
+                {
+                'user_id': invoice_object.get('user_id', 1),  # Example user_id, replace with actual logic
+                'amount': invoice_object.get('amount', 0.0),  # Placeholder amount,
+                'claims': invoice_object.get('claims', ""),
+                'username': invoice_object.get('username', None),
+                'picture': invoice_object.get('picture', None),
+            }
+            ).execute()
             return response.data
         except Exception as e:
             print(f"Error creating new invoice: {e}")
@@ -170,5 +175,31 @@ class SupabaseClient:
         except Exception as e:
             print(f"Error fetching invoice data: {e}")
             return []
+    def upload_image_to_storage(self, file_data: bytes, file_name: str, bucket_name: str = "images", content_type: str = "image/jpeg"):
+        """Enhanced upload with content type"""
+        try:
+            result = self.client.storage.from_(bucket_name).upload(
+                path=file_name,
+                file=file_data,
+                file_options={
+                    "content-type": content_type,
+                    "upsert": True,
+                    "cache-control": "3600"  # Cache for 1 hour
+                }
+            )
+            
+            if result:
+                public_url = self.client.storage.from_(bucket_name).get_public_url(file_name)
+                return {
+                    "success": True,
+                    "file_name": file_name,
+                    "public_url": public_url,
+                    "storage_path": f"{bucket_name}/{file_name}"
+                }
+            else:
+                return {"success": False, "error": "Upload failed"}
+                
+        except Exception as e:
+            return {"success": False, "error": str(e)}
 # Initialize global database client
 db = SupabaseClient()
