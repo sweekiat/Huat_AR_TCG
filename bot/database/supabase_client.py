@@ -6,24 +6,7 @@ class SupabaseClient:
         # self.client: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
         self.client: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
 
-    def get_user_items(self, user_id: int):
-        """Get all claimed items for a user"""
-        try:
-            # response = self.client.table('Claims').select('*').eq('user_id', user_id).eq('paid',False).execute()
-            response = self.client.table('Claims').select('*, Cards(card_name, set_name), Listings(listing_id, price)').eq('user_id', user_id).eq('paid', False).execute()
-            return response.data
-        except Exception as e:
-            print(f"Error fetching user items: {e}")
-            return []
-    def get_claimed_quantity(self, listing_id: int):
-        """Get total claimed quantity for a listing"""
-        try:
-            response = self.client.table('Claims').select("quantity").eq('listing_id', listing_id).execute()
-            return sum(item['quantity'] for item in response.data) if response.data else 0
-        except Exception as e:
-            print(f"Error fetching claimed quantity: {e}")
-            return 0
-    
+#### Users Table ####
     def check_user_exists(self, user_id: int):
         """Check if user record exists"""
         try:
@@ -43,16 +26,24 @@ class SupabaseClient:
         except Exception as e:
             print(f"Error creating user: {e}")
             return None
-    
-    def get_user_invoice_data(self, user_id: int):
-        """Get invoice data for a user"""
+    def edit_user(self,user_id:int,user_object:dict):
+        """Edit user record"""
         try:
-            # This is a placeholder - adjust based on your invoice logic
-            response = self.client.table('Invoices').select('*').eq('user_id', user_id).execute()
+            response = self.client.table('Users').update(user_object).eq('user_id', user_id).execute()
             return response.data
         except Exception as e:
-            print(f"Error fetching invoice data: {e}")
-            return []
+            print(f"Error editing user: {e}")
+            return None
+    def get_user(self, user_id: int):
+        """Get user record by ID"""
+        try:
+            response = self.client.table('Users').select('*').eq('user_id', user_id).execute()
+            return response.data[0] if response.data else None
+        except Exception as e:
+            print(f"Error fetching user: {e}")
+            return None
+
+#### Listings Table ####
     def get_listings(self):
         """Get all listings from the database"""
         try:
@@ -61,7 +52,53 @@ class SupabaseClient:
         except Exception as e:
             print(f"Error fetching listings: {e}")
             return []
+    def get_listing(self, listing_id: int):
+        """Get a specific listing by ID"""
+        try:
+            response = self.client.table('Listings').select('*').eq('listing_id', listing_id).execute()
+            return response.data[0] if response.data else None
+        except Exception as e:
+            print(f"Error fetching listing: {e}")
+            return None
+    def add_listing(self, card_code: str, listed_quantity: int, price: float):
+        """Add a new listing"""
+        try:
+            response = self.client.table('Listings').insert({
+                'card_code': card_code,
+                'listed_quantity': listed_quantity,
+                'price': price
+            }).execute()
+            card_info = self.client.table('Cards').select('*').eq('card_code', card_code).execute()
+            if card_info.data:
+                return {
+                    **response.data[0],
+                    'card': card_info.data[0]['card_name'] # or card_info.data[0]['card_name'] if you only want name
+                }
+            else:
+                return response.data[0]
+            
+        except Exception as e:
+            print(f"Error adding listing: {e}")
+            return None
 
+#### Claims Table ####
+    def get_user_items(self, user_id: int):
+        """Get all claimed items for a user"""
+        try:
+            # response = self.client.table('Claims').select('*').eq('user_id', user_id).eq('paid',False).execute()
+            response = self.client.table('Claims').select('*, Cards(card_name, set_name), Listings(listing_id, price)').eq('user_id', user_id).eq('paid', False).execute()
+            return response.data
+        except Exception as e:
+            print(f"Error fetching user items: {e}")
+            return []
+    def get_claimed_quantity(self, listing_id: int):
+        """Get total claimed quantity for a listing"""
+        try:
+            response = self.client.table('Claims').select("quantity").eq('listing_id', listing_id).execute()
+            return sum(item['quantity'] for item in response.data) if response.data else 0
+        except Exception as e:
+            print(f"Error fetching claimed quantity: {e}")
+            return 0
     def add_claim(self, user_id: int, card_code: str, quantity: int = 1, listing_id: str = None, discounted_price: float = 0):
         """Add a claim for a user"""
         try:
@@ -111,6 +148,7 @@ class SupabaseClient:
         except Exception as e:
             print(f"Error removing claim: {e}")
             return None
+#### Invoices table ####
     def create_new_invoice(self):
         """Create a new invoice"""
         try:
@@ -123,33 +161,14 @@ class SupabaseClient:
         except Exception as e:
             print(f"Error creating new invoice: {e}")
             return None
-    def get_listing(self, listing_id: int):
-        """Get a specific listing by ID"""
+    def get_user_invoice_data(self, user_id: int):
+        """Get invoice data for a user"""
         try:
-            response = self.client.table('Listings').select('*').eq('listing_id', listing_id).execute()
-            return response.data[0] if response.data else None
+            # This is a placeholder - adjust based on your invoice logic
+            response = self.client.table('Invoices').select('*').eq('user_id', user_id).execute()
+            return response.data
         except Exception as e:
-            print(f"Error fetching listing: {e}")
-            return None
-    def add_listing(self, card_code: str, listed_quantity: int, price: float):
-        """Add a new listing"""
-        try:
-            response = self.client.table('Listings').insert({
-                'card_code': card_code,
-                'listed_quantity': listed_quantity,
-                'price': price
-            }).execute()
-            card_info = self.client.table('Cards').select('*').eq('card_code', card_code).execute()
-            if card_info.data:
-                return {
-                    **response.data[0],
-                    'card': card_info.data[0]['card_name'] # or card_info.data[0]['card_name'] if you only want name
-                }
-            else:
-                return response.data[0]
-            
-        except Exception as e:
-            print(f"Error adding listing: {e}")
-            return None
+            print(f"Error fetching invoice data: {e}")
+            return []
 # Initialize global database client
 db = SupabaseClient()

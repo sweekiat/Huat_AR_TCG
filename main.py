@@ -4,6 +4,7 @@ from telegram.ext import Application, CommandHandler
 from bot.config import TELEGRAM_BOT_TOKEN
 from bot.handlers.add_listing import add_listing_command
 from bot.handlers.debugger import debug_all_messages
+from bot.handlers.edit_user import edit_user_conversation
 from bot.handlers.start import start_command
 from bot.handlers.list import list_command
 from bot.handlers.invoice import invoice_conversation
@@ -29,6 +30,7 @@ def main():
     # Add command handlers
     application.add_handler(CommandHandler("start", start_command))
     application.add_handler(CommandHandler("list", list_command))
+    application.add_handler(edit_user_conversation) 
     application.add_handler(invoice_conversation)
     application.add_handler(MessageHandler(filters.TEXT & filters.Regex(r'^claim(\s+\d+)?$'), claim_command))
     application.add_handler(MessageHandler(filters.TEXT & filters.Regex(r'^unclaim(\s+\d+)?$'), unclaim_command))

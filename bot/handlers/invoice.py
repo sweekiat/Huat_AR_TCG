@@ -177,4 +177,7 @@ invoice_conversation = ConversationHandler(
         ],
     },
     fallbacks=[CommandHandler('cancel', cancel_invoice)],
+    # per_message=True,  # Add this line
+    # per_chat=True,     # Add this line (optional but recommended)
+    # per_user=True,     # Add this line (optional but recommended)
 )

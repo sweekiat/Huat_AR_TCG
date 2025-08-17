@@ -29,14 +29,12 @@ async def claim_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.message.reply_text("Listing not found.")
             return
         already_claimed_quantity = db.get_claimed_quantity(int(listing_id))
-        print(f"Already claimed quantity: {already_claimed_quantity}")
         listed_quantity = listing_details.get('listed_quantity', 0)
-        sold_quantity = 0 if listing_details.get('sold',0) == None else listing_details.get('sold', 0)
-
         card_code = listing_details.get('card_code', 'Unknown Card')
+
         quantity = message_text.split()[-1] if message_text.split()[-1].isdigit() else 1  
-        if already_claimed_quantity + quantity > listed_quantity - sold_quantity:
-            await update.message.reply_text("This listing has already been fully claimed.")
+        if already_claimed_quantity + quantity > listed_quantity:
+            await update.message.reply_text("This listing has already been fully claimed. If claimed > 1 try adjusting your number.")
             return
         add_claim_response = db.add_claim(user.id, card_code, int(quantity), listing_id)
         if not add_claim_response:
