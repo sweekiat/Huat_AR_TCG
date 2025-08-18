@@ -25,6 +25,7 @@ async def invoice_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     total = 0
     for item in claims:
         item_name = item.get('Cards', {}).get('card_name', 'Unknown Item')
+        discount = item.get
         price = item.get('Listings', {}).get('price', 0)
         quantity = item.get('quantity', 1)
         subtotal = price * quantity

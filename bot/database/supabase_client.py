@@ -175,6 +175,22 @@ class SupabaseClient:
         except Exception as e:
             print(f"Error fetching invoice data: {e}")
             return []
+    def approve_invoice(self, invoice_id: int):
+        """Approve an invoice"""
+        try:
+            response = self.client.table('Invoices').update({'approved': True}).eq('invoice_id', invoice_id).execute()
+            return response.data
+        except Exception as e:
+            print(f"Error approving invoice: {e}")
+            return None
+    def get_tba_invoices(self):
+        """Get all invoices"""
+        try:
+            response = self.client.table('Invoices').select('*').eq('approved', False).execute()
+            return response.data
+        except Exception as e:
+            print(f"Error fetching all invoices: {e}")
+            return []
     def upload_image_to_storage(self, file_data: bytes, file_name: str, bucket_name: str = "images", content_type: str = "image/jpeg"):
         """Enhanced upload with content type"""
         try:
