@@ -14,13 +14,12 @@ async def claim_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         if not create_user_success:
             await update.message.reply_text("Failed to create user record. Please try again later.")
             return
-        return
+
 
     if update.message.reply_to_message:
         original_message = update.message.reply_to_message
         first_line_of_message = original_message.text.split('\n')[0] if original_message.text else original_message.caption.split('\n')[0]
         listing_id = first_line_of_message.strip("#")
-        print(f"Extracted listing number: {listing_id}")
         if not listing_id.isdigit():
             await update.message.reply_text("Could not find a valid listing number in the replied message. This is a personal item.")
             return
@@ -42,9 +41,8 @@ async def claim_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             return
         
         
-        await update.message.reply_text(f"✅ Successfully claimed: {card_code}")
+        await update.message.reply_text(f"✅ Successfully claimed: {card_code}\n/invoice on instructions of how to pay!")
     else:
         await update.message.reply_text("Please reply to a message to claim a card.")
         return
     
-    print(f"User ID: {user.id}, Card Code: {card_code}")

@@ -23,10 +23,11 @@ async def invoice_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
     invoice_text = "📄 **Your Invoice**\n\n"
     total = 0
+    print(claims)
     for item in claims:
         item_name = item.get('Cards', {}).get('card_name', 'Unknown Item')
-        discount = item.get
-        price = item.get('Listings', {}).get('price', 0)
+        discount = item.get('discounted_price', None)
+        price = item.get('Listings', {}).get('price', 0) if discount is None else discount
         quantity = item.get('quantity', 1)
         subtotal = price * quantity
         total += subtotal
@@ -37,7 +38,6 @@ async def invoice_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     # Store invoice data in context for later use
     context.user_data['total'] = total
-    context.user_data['claims'] = claims
     context.user_data['address'] = address
     context.user_data['contact_number'] = contact_number
 
@@ -137,7 +137,7 @@ async def receive_picture(update: Update, context: ContextTypes.DEFAULT_TYPE):
             file_name=file_name,
             bucket_name="Invoice_picture"
         )
-
+        new_invoice = None
         if upload_result["success"]:
             # Get stored invoice data
             user = update.effective_user.username
@@ -153,6 +153,8 @@ async def receive_picture(update: Update, context: ContextTypes.DEFAULT_TYPE):
             'amount': total,
         }
             new_invoice = db.create_new_invoice(invoice_object=invoice_data)
+        else:
+            await update.message.reply_text(f"❌ Failed to upload the picture. Please try again later.{upload_result.get('error', '')}")
         if new_invoice:
             confirmation_text = (
                 f"✅ **Invoice submitted successfully!**\n\n"

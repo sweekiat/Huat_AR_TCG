@@ -194,15 +194,13 @@ class SupabaseClient:
     def upload_image_to_storage(self, file_data: bytes, file_name: str, bucket_name: str = "images", content_type: str = "image/jpeg"):
         """Enhanced upload with content type"""
         try:
-            result = self.client.storage.from_(bucket_name).upload(
-                path=file_name,
-                file=file_data,
-                file_options={
-                    "content-type": content_type,
-                    "upsert": True,
-                    "cache-control": "3600"  # Cache for 1 hour
-                }
-            )
+            result = result = self.client.storage.from_(bucket_name).upload(
+    path=file_name,
+    file=file_data,
+    file_options={"content-type": content_type, "cache-control": "3600"},
+    upsert=True
+)
+
             
             if result:
                 public_url = self.client.storage.from_(bucket_name).get_public_url(file_name)

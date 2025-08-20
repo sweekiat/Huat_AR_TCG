@@ -42,4 +42,3 @@ async def unclaim_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("Please reply to a message to unclaim a card.")
         return
     
-    print(f"User ID: {user.id}, Card Code: {card_code}")
