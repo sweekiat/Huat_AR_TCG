@@ -32,7 +32,6 @@ async def list_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 # Convert to Singapore time (UTC+8)
                 singapore_date = parsed_date.replace(tzinfo=None) + timedelta(hours=8)
                 parsed_date = singapore_date
-                parsed_date = datetime.fromisoformat(claim_date.replace('Z', '+00:00'))
                 claim_date = parsed_date.strftime('%Y-%m-%d %H:%M')
             except:
                 # Keep original if parsing fails
