@@ -45,9 +45,10 @@
 
 # if __name__ == '__main__':
 #     main()
-
 import logging
+import os
 import asyncio
+from flask import Flask, request, jsonify
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 from bot.config import TELEGRAM_BOT_TOKEN
@@ -68,7 +69,10 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# Global application variable (initialized once per Cloud Function instance)
+# Create Flask app
+app = Flask(__name__)
+
+# Global application variable
 application = None
 
 def get_application():
@@ -94,37 +98,30 @@ def get_application():
     
     return application
 
-def telegram_webhook(request):
-    """
-    Cloud Function entry point for handling Telegram webhooks
-    This function will be called every time someone sends a message to your bot
-    """
+@app.route('/webhook', methods=['POST'])
+def webhook():
+    """Handle incoming Telegram updates"""
     try:
-        # Parse the incoming request
-        if request.method != 'POST':
-            return 'Only POST method allowed', 405
-            
+        # Get the update data
         update_data = request.get_json()
         if not update_data:
             logger.warning("Received empty request body")
             return 'No data received', 400
         
         # Get the bot application
-        app = get_application()
+        bot_app = get_application()
         
-        # Convert the JSON data to a Telegram Update object
-        print(update_data)
-        update = Update.de_json(update_data, app.bot)
+        # Convert JSON to Update object
+        update = Update.de_json(update_data, bot_app.bot)
         if not update:
             logger.warning("Could not parse update from JSON")
             return 'Invalid update format', 400
         
-        # Process the update asynchronously
-        # Cloud Functions require us to run async code in a sync context
+        # Process the update
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         try:
-            loop.run_until_complete(app.process_update(update))
+            loop.run_until_complete(bot_app.process_update(update))
         finally:
             loop.close()
         
@@ -135,28 +132,43 @@ def telegram_webhook(request):
         logger.error(f"Error processing webhook: {str(e)}", exc_info=True)
         return f'Error: {str(e)}', 500
 
-def set_webhook(request):
-    """
-    Optional: Cloud Function to set the webhook URL
-    Call this once after deploying to set up the webhook
-    """
+@app.route('/set_webhook', methods=['POST'])
+def set_webhook():
+    """Set the webhook URL"""
     try:
-        webhook_url = request.get_json().get('webhook_url')
+        data = request.get_json()
+        webhook_url = data.get('webhook_url') if data else None
+        
         if not webhook_url:
-            return 'webhook_url required in JSON body', 400
+            return jsonify({'error': 'webhook_url required in JSON body'}), 400
             
-        app = get_application()
+        bot_app = get_application()
         
         # Set the webhook
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
         try:
-            loop.run_until_complete(app.bot.set_webhook(url=webhook_url))
+            loop.run_until_complete(bot_app.bot.set_webhook(url=webhook_url))
             logger.info(f"Webhook set to: {webhook_url}")
-            return f'Webhook successfully set to {webhook_url}', 200
+            return jsonify({'message': f'Webhook successfully set to {webhook_url}'}), 200
         finally:
             loop.close()
             
     except Exception as e:
         logger.error(f"Error setting webhook: {str(e)}", exc_info=True)
-        return f'Error setting webhook: {str(e)}', 500
+        return jsonify({'error': f'Error setting webhook: {str(e)}'}), 500
+
+@app.route('/health', methods=['GET'])
+def health():
+    """Health check endpoint"""
+    return 'OK', 200
+
+@app.route('/', methods=['GET'])
+def home():
+    """Home endpoint"""
+    return 'Telegram Bot is running!', 200
+
+if __name__ == '__main__':
+    # For local development
+    port = int(os.environ.get('PORT', 8080))
+    app.run(host='0.0.0.0', port=port, debug=False)
