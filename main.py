@@ -86,7 +86,18 @@ application = None
 
 async def error_handler(update, context):
     """Log the error and send a message to the user."""
-    logger.error("Exception while handling an update:", exc_info=context.error)
+    logger.error(
+        "Exception while handling an update",
+        extra={
+            "error": str(context.error),
+            "error_type": type(context.error).__name__,
+            "update_id": update.update_id if update else None,
+            "chat_id": update.effective_chat.id if update and update.effective_chat else None,
+            "user_id": update.effective_user.id if update and update.effective_user else None,
+            "message_text": update.effective_message.text if update and update.effective_message else None
+        },
+        exc_info=context.error
+    )
 
     # Optional: send a friendly message to the user
     if update and update.effective_chat:
