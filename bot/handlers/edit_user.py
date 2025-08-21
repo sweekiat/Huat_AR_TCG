@@ -219,7 +219,7 @@ edit_user_conversation = ConversationHandler(
         ],
     },
     fallbacks=[CommandHandler('cancel', cancel_edit_user)],
-    # per_message=True,  # Add this line
-    # per_chat=True,     # Add this line (optional but recommended)
-    # per_user=True,     # Add this line (optional but recommended)
+    per_message=False,  # Important for webhook mode
+    per_chat=False,     # Important for webhook mode
+    per_user=True 
 )

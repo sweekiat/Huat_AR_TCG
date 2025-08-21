@@ -1,7 +1,7 @@
 from telegram import Update
 from telegram.ext import ContextTypes
 from bot.database.supabase_client import db
-from datetime import datetime
+from datetime import datetime, timedelta
 
 async def list_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle /list command"""
@@ -24,16 +24,20 @@ async def list_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         set_name = item.get('Cards', {}).get('set_name', 'Unknown Set')
         price = item.get('Listings', {}).get('price', 'Unknown Price') if item.get('discounted_price') is None else item.get('discounted_price')
         claim_date = item.get('created_at', 'Unknown Date')
+        quantity = item.get('quantity', 1)
         # Format the date to a simpler format
         if claim_date and claim_date != 'Unknown Date':
             try:
                 # Parse the ISO format date and convert to simple format
+                # Convert to Singapore time (UTC+8)
+                singapore_date = parsed_date.replace(tzinfo=None) + timedelta(hours=8)
+                parsed_date = singapore_date
                 parsed_date = datetime.fromisoformat(claim_date.replace('Z', '+00:00'))
                 claim_date = parsed_date.strftime('%Y-%m-%d %H:%M')
             except:
                 # Keep original if parsing fails
                 pass
-        items_text += f"{i}. {item_name}, {set_name} (claimed: {claim_date})\n"
+        items_text += f"{i}. {item_name}, {set_name} (claimed: {claim_date}) x {quantity}\n"
         items_text += f"   Price: {price}\n"
         total_price += float(price) if isinstance(price, (int, float)) else 0.0
 
