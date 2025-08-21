@@ -84,6 +84,9 @@ app = Flask(__name__)
 # Global application variable
 application = None
 
+loop = asyncio.new_event_loop()
+asyncio.set_event_loop(loop)
+
 async def error_handler(update, context):
     """Log the error and send a message to the user."""
     logger.error(
@@ -157,24 +160,7 @@ def webhook():
             logger.warning("Could not parse update from JSON")
             return 'Invalid update format', 400
         
-        # Process the update asynchronously
-        async def process_update_async():
-            await bot_app.initialize()
-            await bot_app.process_update(update)
-        
-        # Run the async function
-        try:
-            asyncio.run(process_update_async())
-        except RuntimeError as e:
-            if "asyncio.run() cannot be called from a running event loop" in str(e):
-                # If we're already in an event loop, create a new task
-                loop = asyncio.get_event_loop()
-                task = loop.create_task(process_update_async())
-                # Wait for the task to complete
-                while not task.done():
-                    pass
-            else:
-                raise
+        asyncio.run_coroutine_threadsafe(bot_app.process_update(update), loop)
         
         logger.info(f"Successfully processed update: {update.update_id}")
         return 'OK', 200
@@ -201,7 +187,10 @@ def set_webhook():
             await bot.set_webhook(url=webhook_url)
             await bot.initialize()  # Clean up
         
-        asyncio.run(set_webhook_async())
+        # Use persistent loop instead of asyncio.run
+        future = asyncio.run_coroutine_threadsafe(set_webhook_async(), loop)
+        future.result() 
+        
         logger.info(f"Webhook set to: {webhook_url}")
         return jsonify({'message': f'Webhook successfully set to {webhook_url}'}), 200
             
