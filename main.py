@@ -61,12 +61,21 @@ from bot.handlers.invoice import invoice_conversation
 from bot.handlers.claim import claim_command
 from bot.handlers.external_invoice import external_invoice_command
 from bot.handlers.unclaim import unclaim_command
+from pythonjsonlogger import jsonlogger
 
 # Enable logging
-logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    level=logging.INFO
+formatter = jsonlogger.JsonFormatter(
+    '%(asctime)s %(levelname)s %(name)s %(message)s'
 )
+
+handler = logging.StreamHandler()
+handler.setFormatter(formatter)
+
+logging.basicConfig(
+    level=logging.INFO,
+    handlers=[handler]
+)
+
 logger = logging.getLogger(__name__)
 
 # Create Flask app
