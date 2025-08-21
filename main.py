@@ -49,7 +49,7 @@ import logging
 import os
 import asyncio
 from flask import Flask, request, jsonify
-from telegram import Update
+from telegram import Update, Bot
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
 from bot.config import TELEGRAM_BOT_TOKEN
 from bot.handlers.add_listing import add_listing_command
@@ -80,7 +80,14 @@ def get_application():
     global application
     if application is None:
         logger.info("Initializing Telegram bot application...")
-        application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
+        
+        # Create application without updater for webhook mode
+        application = (
+            Application.builder()
+            .token(TELEGRAM_BOT_TOKEN)
+            .updater(None)  # Disable updater for webhook mode
+            .build()
+        )
         
         # Add all your handlers
         application.add_handler(CommandHandler("start", start_command))
@@ -108,6 +115,8 @@ def webhook():
             logger.warning("Received empty request body")
             return 'No data received', 400
         
+        logger.info(f"Received update: {update_data}")
+        
         # Get the bot application
         bot_app = get_application()
         
@@ -117,13 +126,24 @@ def webhook():
             logger.warning("Could not parse update from JSON")
             return 'Invalid update format', 400
         
-        # Process the update
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
+        # Process the update asynchronously
+        async def process_update_async():
+            await bot_app.initialize()
+            await bot_app.process_update(update)
+        
+        # Run the async function
         try:
-            loop.run_until_complete(bot_app.process_update(update))
-        finally:
-            loop.close()
+            asyncio.run(process_update_async())
+        except RuntimeError as e:
+            if "asyncio.run() cannot be called from a running event loop" in str(e):
+                # If we're already in an event loop, create a new task
+                loop = asyncio.get_event_loop()
+                task = loop.create_task(process_update_async())
+                # Wait for the task to complete
+                while not task.done():
+                    pass
+            else:
+                raise
         
         logger.info(f"Successfully processed update: {update.update_id}")
         return 'OK', 200
@@ -141,18 +161,18 @@ def set_webhook():
         
         if not webhook_url:
             return jsonify({'error': 'webhook_url required in JSON body'}), 400
-            
-        bot_app = get_application()
         
-        # Set the webhook
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        try:
-            loop.run_until_complete(bot_app.bot.set_webhook(url=webhook_url))
-            logger.info(f"Webhook set to: {webhook_url}")
-            return jsonify({'message': f'Webhook successfully set to {webhook_url}'}), 200
-        finally:
-            loop.close()
+        # Create a simple bot instance for webhook management
+        bot = Bot(token=TELEGRAM_BOT_TOKEN)
+        
+        # Set the webhook using asyncio.run
+        async def set_webhook_async():
+            await bot.set_webhook(url=webhook_url)
+            await bot.initialize()  # Clean up
+        
+        asyncio.run(set_webhook_async())
+        logger.info(f"Webhook set to: {webhook_url}")
+        return jsonify({'message': f'Webhook successfully set to {webhook_url}'}), 200
             
     except Exception as e:
         logger.error(f"Error setting webhook: {str(e)}", exc_info=True)
@@ -161,12 +181,15 @@ def set_webhook():
 @app.route('/health', methods=['GET'])
 def health():
     """Health check endpoint"""
-    return 'OK', 200
+    return 'Bot is healthy!', 200
 
 @app.route('/', methods=['GET'])
 def home():
     """Home endpoint"""
     return 'Telegram Bot is running!', 200
+
+# Initialize the application when the module is imported
+get_application()
 
 if __name__ == '__main__':
     # For local development
