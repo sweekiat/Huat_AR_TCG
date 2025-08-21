@@ -99,7 +99,7 @@ class SupabaseClient:
         except Exception as e:
             print(f"Error fetching claimed quantity: {e}")
             return 0
-    def add_claim(self, user_id: int, card_code: str, quantity: int = 1, listing_id: str = None, discounted_price: float = 0):
+    def add_claim(self, user_id: int, card_code: str, quantity: int = 1, listing_id: str = None, discounted_price: float = None):
         """Add a claim for a user"""
         try:
             # Check if the user already has a claim for this card

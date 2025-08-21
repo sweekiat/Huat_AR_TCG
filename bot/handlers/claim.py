@@ -15,7 +15,6 @@ async def claim_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             await update.message.reply_text("Failed to create user record. Please try again later.")
             return
 
-
     if update.message.reply_to_message:
         original_message = update.message.reply_to_message
         first_line_of_message = original_message.text.split('\n')[0] if original_message.text else original_message.caption.split('\n')[0]
