@@ -32,13 +32,13 @@ async def list_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 # Convert to Singapore time (UTC+8)
                 singapore_date = parsed_date.replace(tzinfo=None) + timedelta(hours=8)
                 parsed_date = singapore_date
-                claim_date = parsed_date.strftime('%Y-%m-%d %H:%M')
+                claim_date = parsed_date.strftime('%d %B %Y, %I:%M %p') 
             except:
                 # Keep original if parsing fails
                 pass
         items_text += f"{i}. {item_name}, {set_name} (claimed: {claim_date}) x {quantity}\n"
         items_text += f"   Price: {price}\n"
-        total_price += float(price) if isinstance(price, (int, float)) else 0.0
+        total_price += (float(price) if isinstance(price, (int, float)) else 0.0 ) * quantity
 
     items_text += f"\nTotal Price: ${total_price}\n"
     items_text += "\nUse /invoice to generate your invoice."
