@@ -84,6 +84,16 @@ app = Flask(__name__)
 # Global application variable
 application = None
 
+async def error_handler(update, context):
+    """Log the error and send a message to the user."""
+    logger.error("Exception while handling an update:", exc_info=context.error)
+
+    # Optional: send a friendly message to the user
+    if update and update.effective_chat:
+        await update.effective_chat.send_message(
+            "Oops! Something went wrong. The bot owner has been notified."
+        )
+
 def get_application():
     """Get or create the bot application"""
     global application
@@ -97,7 +107,8 @@ def get_application():
             .updater(None)  # Disable updater for webhook mode
             .build()
         )
-        
+        application.add_error_handler(error_handler)
+
         # Add all your handlers
         application.add_handler(CommandHandler("start", start_command))
         application.add_handler(CommandHandler("list", list_command))
