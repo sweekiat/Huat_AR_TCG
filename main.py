@@ -48,6 +48,7 @@
 import logging
 import os
 import asyncio
+import re
 import threading
 from flask import Flask, request, jsonify
 from telegram import Update, Bot
@@ -147,8 +148,8 @@ def initialize_bot():
             application.add_handler(CommandHandler("list", list_command))
             application.add_handler(edit_user_conversation) 
             application.add_handler(invoice_conversation)
-            application.add_handler(MessageHandler(filters.TEXT & filters.Regex(r'^claim(\s+\d+)?$'), claim_command))
-            application.add_handler(MessageHandler(filters.TEXT & filters.Regex(r'^unclaim(\s+\d+)?$'), unclaim_command))
+            application.add_handler(MessageHandler(filters.TEXT & filters.Regex(r'^claim(\s+\d+)?$', re.IGNORECASE), claim_command))
+            application.add_handler(MessageHandler(filters.TEXT & filters.Regex(r'^unclaim(\s+\d+)?$', re.IGNORECASE), unclaim_command))
             application.add_handler(CommandHandler("external_invoice", external_invoice_command)) 
             application.add_handler(CommandHandler("add_listing", add_listing_command))
             # Uncomment if needed for debugging
