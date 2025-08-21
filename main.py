@@ -139,6 +139,18 @@ def get_application():
     
     return application
 
+@app.before_first_request
+def start_bot():
+    """Start the bot once at startup"""
+    bot_app = get_application()
+
+    async def init_and_start():
+        await bot_app.initialize()
+        await bot_app.start()
+
+    asyncio.run_coroutine_threadsafe(init_and_start(), loop).result()
+    logger.info("Bot started and ready to process updates")
+
 @app.route('/webhook', methods=['POST'])
 def webhook():
     """Handle incoming Telegram updates"""
@@ -190,7 +202,7 @@ def set_webhook():
         # Use persistent loop instead of asyncio.run
         future = asyncio.run_coroutine_threadsafe(set_webhook_async(), loop)
         future.result() 
-        
+
         logger.info(f"Webhook set to: {webhook_url}")
         return jsonify({'message': f'Webhook successfully set to {webhook_url}'}), 200
             
