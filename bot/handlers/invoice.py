@@ -23,7 +23,7 @@ async def invoice_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
     invoice_text = "📄 **Your Invoice**\n\n"
     total = 0
-    print(claims)
+    claim_text = ""
     for item in claims:
         item_name = item.get('Cards', {}).get('card_name', 'Unknown Item')
         discount = item.get('discounted_price', None)
@@ -31,6 +31,7 @@ async def invoice_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         quantity = item.get('quantity', 1)
         subtotal = price * quantity
         total += subtotal
+        claim_text += f"{item.get('claim_id')}"
         
         invoice_text += f"• {item_name} x{quantity} - ${price:.2f} each = ${subtotal:.2f}\n"
     
@@ -40,6 +41,7 @@ async def invoice_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     context.user_data['total'] = total
     context.user_data['address'] = address
     context.user_data['contact_number'] = contact_number
+    context.user_data['claim_ids'] = claim_text
 
     # Send invoice
     await update.message.reply_text(invoice_text, parse_mode='Markdown')
@@ -142,13 +144,13 @@ async def receive_picture(update: Update, context: ContextTypes.DEFAULT_TYPE):
             # Get stored invoice data
             user = update.effective_user.username
             total = context.user_data.get('total', 0)
-            claims = ", ".join(context.user_data.get('claims', []))
+            claim_ids = context.user_data.get('claim_ids', "")
             needs_delivery = context.user_data.get('needs_delivery', False)
             delivery_address = context.user_data.get('delivery_address', None)
             invoice_data = {
             'username': user,
             'user_id': user_id,
-            'claims': claims,
+            'claims': claim_ids,
             'picture': upload_result["public_url"],
             'amount': total,
         }
@@ -176,7 +178,9 @@ async def receive_picture(update: Update, context: ContextTypes.DEFAULT_TYPE):
             
             return ConversationHandler.END
         else:
-            await update.message.reply_text("❌ Invoice submission failed.")
+            await update.message.reply_text("❌ Invoice submission failed. /invoice to start the process over")
+            context.user_data.clear()
+            return ConversationHandler.END
     else:
         await update.message.reply_text(
             "❌ Please send a picture, not text or other media.\n"
