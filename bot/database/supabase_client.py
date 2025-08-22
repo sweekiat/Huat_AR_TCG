@@ -198,7 +198,6 @@ class SupabaseClient:
     path=file_name,
     file=file_data,
     file_options={"content-type": content_type, "cache-control": "3600"},
-    upsert=True
 )
 
             
@@ -215,5 +214,18 @@ class SupabaseClient:
                 
         except Exception as e:
             return {"success": False, "error": str(e)}
+    #### Claim_invoice table #####
+    def create_claim_invoice(self,invoice_id:int,claims:str):
+        try:
+            claim_list = claims.split(",")  # Split the claims string into a list
+            for claim in claim_list:
+                # Create a new claim_invoice record for each claim
+                response = self.client.table('Claim_invoice').insert({
+                    'invoice_id': invoice_id,
+                    'claim': claim.strip()  # Remove any extra spaces
+                }).execute()
+        except Exception as e:
+            print(f"Error creating claim_invoice: {e}")
+            return None
 # Initialize global database client
 db = SupabaseClient()

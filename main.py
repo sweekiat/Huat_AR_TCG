@@ -1,50 +1,3 @@
-# import logging
-# from telegram import Update
-# from telegram.ext import Application, CommandHandler
-# from bot.config import TELEGRAM_BOT_TOKEN
-# from bot.handlers.add_listing import add_listing_command
-# from bot.handlers.debugger import debug_all_messages
-# from bot.handlers.edit_user import edit_user_conversation
-# from bot.handlers.start import start_command
-# from bot.handlers.list import list_command
-# from bot.handlers.invoice import invoice_conversation
-# from bot.handlers.claim import claim_command
-# from bot.handlers.external_invoice import external_invoice_command
-# from telegram.ext import MessageHandler, filters
-
-# from bot.handlers.unclaim import unclaim_command
-
-# # Enable logging
-# logging.basicConfig(
-#     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-#     level=logging.INFO
-# )
-# logger = logging.getLogger(__name__)
-
-# def main():
-#     """Start the bot"""
-#     # Create the Application
-#     application = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
-#     # Create the conversation handler
-    
-#     # Add command handlers
-#     application.add_handler(CommandHandler("start", start_command))
-#     application.add_handler(CommandHandler("list", list_command))
-#     application.add_handler(edit_user_conversation) 
-#     application.add_handler(invoice_conversation)
-#     application.add_handler(MessageHandler(filters.TEXT & filters.Regex(r'^claim(\s+\d+)?$'), claim_command))
-#     application.add_handler(MessageHandler(filters.TEXT & filters.Regex(r'^unclaim(\s+\d+)?$'), unclaim_command))
-#     application.add_handler(CommandHandler("external_invoice", external_invoice_command)) 
-#     application.add_handler(CommandHandler("add_listing", add_listing_command)) 
-#     # application.add_handler(MessageHandler(filters.ALL, debug_all_messages))
-#     # do i need a yours command handler? so that i can change and alter the claim amount
-
-#     # Start the bot
-#     logger.info("Starting Huat_AR_tcg bot...")
-#     application.run_polling(allowed_updates=Update.ALL_TYPES)
-
-# if __name__ == '__main__':
-#     main()
 import re
 import logging
 import os
@@ -52,9 +5,10 @@ import asyncio
 import threading
 from flask import Flask, request, jsonify
 from telegram import Update, Bot
-from telegram.ext import Application, CommandHandler, MessageHandler, filters
+from telegram.ext import Application, CommandHandler, MessageHandler, filters, CallbackQueryHandler
 from bot.config import TELEGRAM_BOT_TOKEN
 from bot.handlers.add_listing import add_listing_command
+from bot.handlers.approve_invoice import handle_invoice_callback
 from bot.handlers.debugger import debug_all_messages
 from bot.handlers.edit_user import edit_user_conversation
 from bot.handlers.start import start_command
@@ -155,6 +109,7 @@ def initialize_bot():
             application.add_handler(MessageHandler(filters.TEXT & filters.Regex(unclaim_pattern), unclaim_command))
             application.add_handler(CommandHandler("external_invoice", external_invoice_command)) 
             application.add_handler(CommandHandler("add_listing", add_listing_command))
+            application.add_handler(CallbackQueryHandler(handle_invoice_callback))
             # Uncomment if needed for debugging
             # application.add_handler(MessageHandler(filters.ALL, debug_all_messages))
             
@@ -283,3 +238,12 @@ if __name__ == '__main__':
     # For local development
     port = int(os.environ.get('PORT', 8080))
     app.run(host='0.0.0.0', port=port, debug=False)
+
+#   curl -X POST "https://api.telegram.org/bot123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11/setWebhook" \
+#   -H "Content-Type: application/json" \
+#   -d '{"url": "https://abc123.ngrok.io/webhook"}'
+
+# curl -X POST "https://api.telegram.org/bot123456:ABC-DEF1234ghIkl-zyx57W2v1u123ew11/setWebhook" \
+#   -H "Content-Type: application/json" \
+#   -d '{"url": "https://huat-ar-tcg-739389231382.europe-west1.run.app/webhook"}'
+
