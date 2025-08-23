@@ -5,7 +5,15 @@ class SupabaseClient:
     def __init__(self):
         # self.client: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
         self.client: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_KEY)
-
+# own use
+    def get_listings_with_name(self):
+        """Get all listings from the database"""
+        try:
+            response = self.client.table('Listings').select("*,Cards(card_name)").execute()
+            return response.data
+        except Exception as e:
+            print(f"Error fetching listings: {e}")
+            return []
 #### Users Table ####
     def check_user_exists(self, user_id: int):
         """Check if user record exists"""
@@ -166,15 +174,6 @@ class SupabaseClient:
         except Exception as e:
             print(f"Error creating new invoice: {e}")
             return None
-    def get_user_invoice_data(self, user_id: int):
-        """Get invoice data for a user"""
-        try:
-            # This is a placeholder - adjust based on your invoice logic
-            response = self.client.table('Invoices').select('*').eq('user_id', user_id).execute()
-            return response.data
-        except Exception as e:
-            print(f"Error fetching invoice data: {e}")
-            return []
     def approve_invoice(self, invoice_id: int):
         """Approve an invoice"""
         try:

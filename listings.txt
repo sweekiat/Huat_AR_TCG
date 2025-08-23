@@ -1,0 +1,1050 @@
+#2
+s8b-187
+Charizard
+Qty: 2
+Price: $14
+
+#6
+s8b-195
+Zekrom
+Qty: 2
+Price: $18
+
+#11
+sv2a-167
+Ivysaur
+Qty: 2
+Price: $9
+
+#15
+sv2a-171
+Wartortle
+Qty: 4
+Price: $9
+
+#19
+sv2d-79
+Tyranitar
+Qty: 2
+Price: $9
+
+#22
+sv9-109
+N's Reshiram
+Qty: 3
+Price: $11
+
+#23
+sv9a-70
+Ethan's Typhlosion
+Qty: 1
+Price: $14
+
+#13
+sv2a-169
+Charmeleon
+Qty: 2
+Price: $11
+
+#17
+sv2a-175
+Psyduck
+Qty: 6
+Price: $7
+
+#12
+sv2a-168
+Charmander
+Qty: 1
+Price: $15
+
+#21
+sv5a-78
+Eevee
+Qty: 3
+Price: $25
+
+#18
+sv2a-183
+Mewtwo
+Qty: 3
+Price: $13
+
+#3
+s8b-188
+Flareon
+Qty: 1
+Price: $12
+
+#4
+s8b-189
+Vaporeon
+Qty: 1
+Price: $12
+
+#5
+s8b-193
+Jolteon
+Qty: 1
+Price: $10
+
+#7
+s8b-210
+Eevee
+Qty: 1
+Price: $12
+
+#29
+s8b-211
+Castform
+Qty: 3
+Price: $3
+
+#30
+s10a-76
+Spiritomb
+Qty: 4
+Price: $4
+
+#32
+s11a-69
+Braixen
+Qty: 2
+Price: $7
+
+#33
+s9a-68
+Roserade
+Qty: 2
+Price: $3
+
+#34
+s8b-208
+Bronzong
+Qty: 2
+Price: $5
+
+#35
+s8b-202
+Rockruff
+Qty: 3
+Price: $3
+
+#36
+s8b-207
+Galarian Obstagoon
+Qty: 1
+Price: $3
+
+#37
+s8b-199
+Malamar
+Qty: 1
+Price: $3
+
+#44
+s8b-205
+Ariados
+Qty: 1
+Price: $3
+
+#45
+s8b-191
+Octillery
+Qty: 1
+Price: $4
+
+#46
+s8b-192
+Frosmoth
+Qty: 2
+Price: $4
+
+#48
+s9a-70
+Wyrdeer
+Qty: 1
+Price: $3
+
+#50
+s9a-71
+Kleavor
+Qty: 1
+Price: $3
+
+#38
+s8b-200
+Dedenne
+Qty: 1
+Price: $6
+
+#39
+s11a-70
+Milotic
+Qty: 2
+Price: $6
+
+#40
+s10a-77
+Snorlax
+Qty: 2
+Price: $8
+
+#41
+s11a-72
+Gardevoir
+Qty: 1
+Price: $6
+
+#76
+sv11b-122
+Musharna
+Qty: 1
+Price: $6
+
+#51
+sv11b-99
+Darmanitan
+Qty: 1
+Price: $6
+
+#53
+sv11b-92
+Lilligant
+Qty: 1
+Price: $8
+
+#77
+sv11b-121
+Munna
+Qty: 1
+Price: $6
+
+#63
+sv11b-100
+Litwick
+Qty: 1
+Price: $7
+
+#67
+sv11b-114
+Beartic
+Qty: 2
+Price: $5
+
+#71
+sv11b-129
+Golurk
+Qty: 2
+Price: $6
+
+#72
+sv11b-127
+Beheeyem
+Qty: 3
+Price: $6
+
+#73
+sv11b-126
+Elgyem
+Qty: 2
+Price: $6
+
+#74
+sv11b-125
+Reuniclus
+Qty: 2
+Price: $6
+
+#75
+sv11b-124
+Duosion
+Qty: 1
+Price: $7
+
+#78
+sv11b-120
+Thundurus
+Qty: 1
+Price: $7
+
+#82
+sv11b-135
+Dwebble
+Qty: 1
+Price: $8
+
+#88
+sv11b-147
+Pawniard
+Qty: 1
+Price: $6
+
+#92
+sv11b-158
+Cinoccino
+Qty: 1
+Price: $7
+
+#93
+sv11b-157
+Minccino
+Qty: 2
+Price: $8
+
+#98
+sv11b-151
+Fraxure
+Qty: 2
+Price: $6
+
+#1
+sv1s-83
+Ralts
+Qty: 2
+Price: $14
+
+#9
+sv1s-84
+Kirlia
+Qty: 3
+Price: $13
+
+#25
+sv9a-72
+Misty's Lapras
+Qty: 4
+Price: $12
+
+#24
+sv9a-71
+Misty's Psyduck
+Qty: 3
+Price: $20
+
+#20
+sv3a-69
+Groudon
+Qty: 2
+Price: $20
+
+#10
+sv2a-166
+Bulbasaur
+Qty: 1
+Price: $13
+
+#14
+sv2a-170
+Squirtle
+Qty: 3
+Price: $13
+
+#16
+sv2a-173
+Pikachu
+Qty: 1
+Price: $14
+
+#43
+s8b-196
+Gardevoir
+Qty: 7
+Price: $6
+
+#56
+sv11b-89
+Pansage
+Qty: 1
+Price: $7
+
+#58
+sv11b-107
+Tympole
+Qty: 1
+Price: $6
+
+#60
+sv11b-105
+Panpour
+Qty: 1
+Price: $6
+
+#59
+sv11b-106
+Simipour
+Qty: 1
+Price: $6
+
+#96
+sv11b-153
+Pidove
+Qty: 1
+Price: $6
+
+#54
+sv11b-91
+Petilil
+Qty: 2
+Price: $7
+
+#52
+sv11b-94
+Karrablast
+Qty: 1
+Price: $7
+
+#55
+sv11b-90
+Simisage
+Qty: 5
+Price: $5.5
+
+#57
+sv11b-108
+Palpitoad
+Qty: 4
+Price: $7.5
+
+#61
+sv11b-103
+Larvesta
+Qty: 2
+Price: $5.5
+
+#62
+sv11b-101
+Lampent
+Qty: 2
+Price: $7.5
+
+#64
+sv11b-119
+Eelektross
+Qty: 1
+Price: $4
+
+#65
+sv11b-116
+Emolga
+Qty: 2
+Price: $9
+
+#66
+sv11b-115
+Cryogonal
+Qty: 1
+Price: $5.5
+
+#68
+sv11b-112
+Alomomola
+Qty: 1
+Price: $4.5
+
+#69
+sv11b-111
+Carracosta
+Qty: 1
+Price: $4
+
+#70
+sv11b-110
+Tirtouga
+Qty: 2
+Price: $6.5
+
+#79
+sv11b-139
+Whirlipede
+Qty: 3
+Price: $4
+
+#47
+sm11b-61
+Stoutland
+Qty: 1
+Price: $9
+
+#80
+sv11b-138
+Venipede
+Qty: 3
+Price: $4.5
+
+#83
+sv11b-134
+Throh
+Qty: 2
+Price: $4
+
+#84
+sv11b-133
+Conkeldurr
+Qty: 2
+Price: $5
+
+#85
+sv11b-132
+Gurdurr
+Qty: 2
+Price: $5
+
+#81
+sv11b-136
+Crustle
+Qty: 4
+Price: $5.5
+
+#86
+sv11b-130
+Drilbur
+Qty: 2
+Price: $5.5
+
+#87
+sv11b-148
+Bisharp
+Qty: 3
+Price: $6.5
+
+#42
+s10a-75
+Hisuian Arcanine
+Qty: 2
+Price: $4
+
+#89
+sv11b-146
+Escavalier
+Qty: 2
+Price: $5
+
+#90
+sv11b-142
+Krokorok
+Qty: 3
+Price: $5
+
+#91
+sv11b-140
+Scolipede
+Qty: 1
+Price: $6
+
+#94
+sv11b-155
+Unfezant
+Qty: 3
+Price: $5
+
+#95
+sv11b-154
+Tranquill
+Qty: 1
+Price: $5.5
+
+#97
+sv11b-152
+Haxorus
+Qty: 1
+Price: $7
+
+#99
+sv11b-150
+Axew
+Qty: 1
+Price: $6.5
+
+#49
+s9a-72
+Mightyena
+Qty: 1
+Price: $3
+
+#31
+s8b-206
+Houndoom
+Qty: 2
+Price: $4
+
+#100
+sv6-113
+Chansey
+Qty: 7
+Price: $9
+
+#101
+s12a-185
+Deoxys
+Qty: 5
+Price: $7
+
+#102
+sv9-108
+N's Zorua
+Qty: 7
+Price: $4
+
+#103
+sv1v-86
+Drowzee
+Qty: 5
+Price: $10
+
+#104
+sv3-113
+Clefairy
+Qty: 7
+Price: $9
+
+#105
+s10a-74
+Gengar
+Qty: 2
+Price: $18
+
+#106
+sv9-102
+Articuno
+Qty: 9
+Price: $7
+
+#109
+sv2d-74
+Raichu
+Qty: 5
+Price: $12
+
+#110
+sv3-110
+Ninetails
+Qty: 3
+Price: $9
+
+#111
+s12a-190
+Galarian Moltres
+Qty: 2
+Price: $8
+
+#112
+sv5m-74
+Sawsbuck
+Qty: 4
+Price: $9
+
+#113
+sv5m-73
+Deerling
+Qty: 1
+Price: $9
+
+#114
+sv1v-82
+Slowpoke
+Qty: 4
+Price: $7.5
+
+#115
+sv2a-181
+Snorlax
+Qty: 3
+Price: $8
+
+#116
+sv10-101
+Blaziken
+Qty: 5
+Price: $7
+
+#117
+sv1s-86
+Riolu
+Qty: 5
+Price: $10
+
+#118
+sv3a-66
+Minun
+Qty: 1
+Price: $10
+
+#119
+sv3a-65
+Plusle
+Qty: 2
+Price: $10
+
+#120
+sv1a-75
+Sprigatito
+Qty: 3
+Price: $10
+
+#121
+sv1a-76
+Floragato
+Qty: 1
+Price: $5
+
+#122
+sv3a-71
+Yveltal
+Qty: 1
+Price: $7.5
+
+#123
+sv11w-158
+Tornadus
+Qty: 3
+Price: $5
+
+#124
+sv11w-156
+Rufflet
+Qty: 2
+Price: $4
+
+#125
+sv11w-155
+Stoutland
+Qty: 2
+Price: $4.5
+
+#126
+sv11w-154
+Herdier
+Qty: 3
+Price: $5
+
+#127
+sv11w-152
+Watchog
+Qty: 3
+Price: $4.5
+
+#128
+sv11w-151
+Patrat
+Qty: 2
+Price: $4.5
+
+#129
+sv11w-150
+Druddigon
+Qty: 3
+Price: $5.5
+
+#130
+sv11w-149
+Durant
+Qty: 1
+Price: $4.5
+
+#131
+sv11w-148
+Klinklang
+Qty: 2
+Price: $4
+
+#132
+sv11w-147
+Klang
+Qty: 1
+Price: $4
+
+#133
+sv11w-146
+Klink
+Qty: 3
+Price: $4
+
+#134
+sv11w-145
+Ferrothorn
+Qty: 1
+Price: $4.5
+
+#135
+sv11w-144
+Ferroseed
+Qty: 2
+Price: $4.5
+
+#136
+sv11w-143
+Zweilous
+Qty: 1
+Price: $5.5
+
+#137
+sv11w-139
+Garbodor
+Qty: 1
+Price: $5
+
+#138
+sv11w-138
+Trubbish
+Qty: 3
+Price: $4.5
+
+#139
+sv11w-137
+Scrafty
+Qty: 2
+Price: $4.5
+
+#140
+sv11w-136
+Scraggy
+Qty: 1
+Price: $5
+
+#141
+sv11w-135
+Liepard
+Qty: 2
+Price: $5
+
+#142
+sv11w-134
+Purrloin
+Qty: 2
+Price: $5
+
+#143
+sv11w-133
+Terrakion
+Qty: 4
+Price: $5
+
+#144
+sv11w-132
+Mienshao
+Qty: 3
+Price: $5.5
+
+#145
+sv11w-131
+Mienfoo
+Qty: 3
+Price: $4.5
+
+#146
+sv11w-130
+Archeops
+Qty: 1
+Price: $5.5
+
+#147
+sv11w-129
+Archen
+Qty: 2
+Price: $4.5
+
+#148
+sv11w-128
+Sawk
+Qty: 5
+Price: $4.5
+
+#149
+sv11w-127
+Gigalith
+Qty: 1
+Price: $4.5
+
+#150
+sv11w-125
+Roggenrola
+Qty: 2
+Price: $4.5
+
+#151
+sv11w-124
+Frillish
+Qty: 1
+Price: $7.5
+
+#152
+sv11w-123
+Gothitelle
+Qty: 2
+Price: $8
+
+#153
+sv11w-121
+Gothita
+Qty: 1
+Price: $6
+
+#154
+sv11w-120
+Cofagrigus
+Qty: 1
+Price: $5
+
+#155
+sv11w-110
+Vanilluxe
+Qty: 1
+Price: $5
+
+#156
+sv11w-111
+Blitzle
+Qty: 2
+Price: $4.5
+
+#157
+sv11w-112
+Zebstrika
+Qty: 1
+Price: $4.5
+
+#158
+sv11w-113
+Joltik
+Qty: 1
+Price: $6.5
+
+#159
+sv11w-114
+Galvantula
+Qty: 2
+Price: $5.5
+
+#160
+sv11w-115
+Stunfisk
+Qty: 2
+Price: $4
+
+#161
+sv11w-118
+Sigilyph
+Qty: 1
+Price: $4
+
+#162
+sv11w-119
+Yamask
+Qty: 3
+Price: $3.5
+
+#163
+sv11w-100
+Simisear
+Qty: 2
+Price: $5.5
+
+#164
+sv11w-101
+Heatmor
+Qty: 2
+Price: $4
+
+#165
+sv11w-103
+Dewott
+Qty: 1
+Price: $7
+
+#166
+sv11w-104
+Samurott
+Qty: 1
+Price: $8.5
+
+#167
+sv11w-105
+Basculin
+Qty: 2
+Price: $4
+
+#168
+sv11w-106
+Ducklett
+Qty: 2
+Price: $6
+
+#169
+sv11w-107
+Swanna
+Qty: 1
+Price: $5
+
+#170
+sv11w-109
+Vanillish
+Qty: 2
+Price: $5
+
+#171
+sv11w-90
+Cottonee
+Qty: 2
+Price: $4.5
+
+#172
+sv11w-92
+Sawsbuck
+Qty: 1
+Price: $5.5
+
+#173
+sv11w-93
+Shelmet
+Qty: 1
+Price: $4.5
+
+#174
+sv11w-94
+Accelgor
+Qty: 3
+Price: $5
+
+#175
+sv11w-95
+Virizion
+Qty: 2
+Price: $6
+
+#176
+sv11w-97
+Pignite
+Qty: 1
+Price: $5
+
+#177
+sv11w-98
+Emboar
+Qty: 2
+Price: $6.5
+
+#178
+sv11w-99
+Pansear
+Qty: 3
+Price: $4
+
+#179
+sv11w-89
+Levanny
+Qty: 4
+Price: $5
+
+#180
+sv11w-87
+Sewaddle
+Qty: 2
+Price: $5
+
+#28
+s11a-69
+Braixen
+Qty: 1000
+Price: $100
+
