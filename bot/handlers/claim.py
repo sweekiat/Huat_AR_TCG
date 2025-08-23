@@ -40,7 +40,7 @@ async def claim_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
             return
         
         
-        await update.message.reply_text(f"✅ Successfully claimed: {card_code}\n Dm @Huat_AR_TCG_bot and type "/start", then follow the instructions on how to pay!")
+        await update.message.reply_text(f"✅ Successfully claimed: {card_code} by {user.username}\n Dm @Huat_AR_TCG_bot and type "/start", then follow the instructions on how to pay!")
     else:
         await update.message.reply_text("Please reply to a message to claim a card.")
         return
