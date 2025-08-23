@@ -28,11 +28,11 @@ async def list_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         # Format the date to a simpler format
         if claim_date and claim_date != 'Unknown Date':
             try:
-                # Parse the ISO format date and convert to simple format
+                parsed_date = datetime.fromisoformat(claim_date.replace('Z', '+00:00'))
                 # Convert to Singapore time (UTC+8)
                 singapore_date = parsed_date.replace(tzinfo=None) + timedelta(hours=8)
-                parsed_date = singapore_date
-                claim_date = parsed_date.strftime('%d %B %Y, %I:%M %p') 
+                # Format to readable string
+                claim_date = singapore_date.strftime('%Y-%m-%d %H:%M')
             except:
                 # Keep original if parsing fails
                 pass

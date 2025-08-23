@@ -31,7 +31,7 @@ async def invoice_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         quantity = item.get('quantity', 1)
         subtotal = price * quantity
         total += subtotal
-        claim_text += f"{item.get('claim_id')}"
+        claim_text += f"{item.get('claim_id')}" + ("," if item != claims[-1] else "")
         
         invoice_text += f"• {item_name} x{quantity} - ${price:.2f} each = ${subtotal:.2f}\n"
     
