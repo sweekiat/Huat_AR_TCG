@@ -196,7 +196,7 @@ async def cancel_invoice(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # Updated conversation handler with new states
 invoice_conversation = ConversationHandler(
-    entry_points=[CommandHandler('invoice', invoice_command)],
+    entry_points=[CommandHandler('invoice', invoice_command, filters=filters.ChatType.PRIVATE)],
     states={
         WAITING_FOR_DELIVERY_CHOICE: [
             CallbackQueryHandler(handle_delivery_choice, pattern="^delivery_")

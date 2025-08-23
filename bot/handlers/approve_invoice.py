@@ -1,7 +1,6 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import ContextTypes, CallbackQueryHandler
+from telegram.ext import ContextTypes
 from bot.database.supabase_client import db
-from datetime import datetime
 from bot.util.admin_wrapper import admin_required
 
 @admin_required
@@ -42,11 +41,6 @@ async def show_invoice(update: Update, context: ContextTypes.DEFAULT_TYPE, index
     
     try:
         if picture_url:
-            ##### Picture URL is already the public path, but if there isnt a way to store the url immediately already into invoices table,
-            ##### then we need to use below
-            # picture_url = db.client.storage.from_('Invoice_picture').get_public_url(picture_path)
-            
-            # Send photo with caption and keyboard
             if update.callback_query:
                 # If this is from a callback query, edit the message
                 await update.callback_query.message.delete()
@@ -99,27 +93,14 @@ def format_invoice_info(invoice, current_num, total_num):
     """Format invoice information for display"""
     invoice_id = invoice.get('id', 'N/A')
     amount = invoice.get('amount', 'N/A')
-    description = invoice.get('description', 'No description')
-    created_at = invoice.get('created_at', '')
-    user_id = invoice.get('user_id', 'N/A')
-    
-    # Format date if available
-    formatted_date = 'N/A'
-    if created_at:
-        try:
-            date_obj = datetime.fromisoformat(created_at.replace('Z', '+00:00'))
-            formatted_date = date_obj.strftime('%Y-%m-%d %H:%M')
-        except:
-            formatted_date = created_at
+    claims = invoice.get('claims', 'No claims<something is wrong>')
+
     
     return f"""
 📋 <b>Invoice {current_num} of {total_num}</b>
-
 🆔 <b>ID:</b> {invoice_id}
 💰 <b>Amount:</b> ${amount}
-📝 <b>Description:</b> {description}
-👤 <b>User ID:</b> {user_id}
-📅 <b>Created:</b> {formatted_date}
+📝 <b>Claims:</b> {claims}
     """.strip()
 
 def create_invoice_keyboard(current_index, total_invoices):
@@ -197,7 +178,7 @@ async def handle_invoice_callback(update: Update, context: ContextTypes.DEFAULT_
 
 async def approve_invoice(update: Update, context: ContextTypes.DEFAULT_TYPE, index: int):
     """Approve an invoice"""
-    invoices = context.user_data.get('invoices', [])
+    invoices:list = context.user_data.get('invoices', [])
     if index >= len(invoices):
         return
     
@@ -206,8 +187,13 @@ async def approve_invoice(update: Update, context: ContextTypes.DEFAULT_TYPE, in
     
     try:
         # Update invoice status in database
-        db.update_invoice_status(invoice_id, 'approved')
-        
+        approve_invoice = db.approve_invoice(invoice_id)
+        if not approve_invoice:
+            await update.callback_query.edit_message_text(
+                f"❌ Error approving invoice #{invoice_id}."
+            )
+            return
+
         # Remove from current list
         invoices.pop(index)
         context.user_data['invoices'] = invoices

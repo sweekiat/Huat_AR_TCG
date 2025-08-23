@@ -206,7 +206,7 @@ async def cancel_edit_user(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 # Create the conversation handler
 edit_user_conversation = ConversationHandler(
-    entry_points=[CommandHandler('edit_user', edit_user_command)],
+    entry_points=[CommandHandler('edit_user', edit_user_command, filters=filters.ChatType.PRIVATE)],
     states={
         WAITING_FOR_CHOICE: [
             CallbackQueryHandler(handle_edit_choice, pattern="^(edit_contact|edit_address|save_changes|cancel_edit)$")
