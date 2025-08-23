@@ -35,7 +35,7 @@ async def invoice_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
         
         invoice_text += f"• {item_name} x{quantity} - ${price:.2f} each = ${subtotal:.2f}\n"
     
-    invoice_text += f"\n**Total: ${total:.2f}**"
+    invoice_text += f"\n**Total: ${total:.2f}**\nPaynow: 96549379"
     
     # Store invoice data in context for later use
     context.user_data['total'] = total
