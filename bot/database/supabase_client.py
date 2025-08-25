@@ -231,7 +231,7 @@ class SupabaseClient:
                 # Create a new claim_invoice record for each claim
                 response = self.client.table('Claim_invoice').insert({
                     'invoice_id': invoice_id,
-                    'claim': claim.strip()  # Remove any extra spaces
+                    'claim_id': claim.strip()  # Remove any extra spaces
                 }).execute()
         except Exception as e:
             print(f"Error creating claim_invoice: {e}")
