@@ -1,257 +1,199 @@
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import ContextTypes
+from telegram.ext import (
+    ContextTypes, 
+    ConversationHandler, 
+    CommandHandler, 
+    CallbackQueryHandler
+)
+import asyncio
 from bot.database.supabase_client import db
-from bot.util.admin_wrapper import admin_required
 
-@admin_required
-async def approve_invoice_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle /approve_invoice command"""
-    tba_invoices = db.get_tba_invoices()
-    if not tba_invoices:
-        await update.message.reply_text("No invoices to approve")
-        return
-    
-    # Store invoices in user_data for navigation
-    context.user_data['invoices'] = tba_invoices
-    context.user_data['current_invoice_index'] = 0
-    
-    # Show the first invoice
-    await show_invoice(update, context, 0)
+# Conversation states
+REVIEWING_INVOICE = 1
 
-async def show_invoice(update: Update, context: ContextTypes.DEFAULT_TYPE, index: int):
-    """Display a specific invoice with approval options"""
-    invoices = context.user_data.get('invoices', [])
+class InvoiceApprovalHandler:
+    def __init__(self, db):
+        self.db = db
     
-    if index < 0 or index >= len(invoices):
-        await update.message.reply_text("No more invoices to review.")
-        return
+    async def approve_invoices_command(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Start the invoice approval process"""
+        # Get all non-approved invoices
+        invoices = self.db.get_tba_invoices()
+        
+        if not invoices:
+            await update.message.reply_text("No invoices pending approval.")
+            return ConversationHandler.END
+        
+        # Store invoices in context for navigation
+        context.user_data['invoices'] = invoices
+        context.user_data['current_index'] = 0
+        
+        # Show first invoice
+        await self.show_invoice(update, context, 0)
+        return REVIEWING_INVOICE
     
-    invoice = invoices[index]
-    context.user_data['current_invoice_index'] = index
-    
-    # Format invoice information
-    invoice_text = format_invoice_info(invoice, index + 1, len(invoices))
-    
-    # Create inline keyboard
-    keyboard = create_invoice_keyboard(index, len(invoices))
-    reply_markup = InlineKeyboardMarkup(keyboard)
-    
-    # Get picture URL if available
-    picture_url = invoice.get('picture', "")
-    
-    try:
-        if picture_url:
-            if update.callback_query:
-                # If this is from a callback query, edit the message
-                await update.callback_query.message.delete()
-                await context.bot.send_photo(
-                    chat_id=update.effective_chat.id,
-                    photo=picture_url,
-                    caption=invoice_text,
-                    reply_markup=reply_markup,
-                    parse_mode='HTML'
-                )
-            else:
-                # If this is the initial command
-                await update.message.reply_photo(
-                    photo=picture_url,
-                    caption=invoice_text,
-                    reply_markup=reply_markup,
-                    parse_mode='HTML'
-                )
+    async def show_invoice(self, update: Update, context: ContextTypes.DEFAULT_TYPE, index: int):
+        """Display an invoice with approval options"""
+        invoices = context.user_data['invoices']
+        
+        if index >= len(invoices):
+            await update.effective_message.reply_text("All invoices reviewed!")
+            return ConversationHandler.END
+        
+        invoice = invoices[index]
+        context.user_data['current_index'] = index
+        
+        # Create message text with invoice details
+        message_text = f"""
+📋 **Invoice #{invoice.get('id')}**
+💰 Amount: ${invoice.get('amount', 'N/A')}
+📅 Date: {invoice.get('created_at', 'N/A')}
+🏷️ Claims: {invoice.get('claims', 'N/A')}
+
+Invoice {index + 1} of {len(invoices)}
+        """
+        
+        # Create inline keyboard
+        keyboard = [
+            [
+                InlineKeyboardButton("✅ Approve", callback_data=f"approve_{invoice['invoice_id']}"),
+                InlineKeyboardButton("⏭️ Skip", callback_data="skip")
+            ],
+            [InlineKeyboardButton("❌ Cancel", callback_data="cancel")]
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard)
+        
+        # Send photo with caption if picture URL exists
+        if invoice.get('picture'):
+            try:
+                if update.callback_query:
+                    # If this is from a callback query, edit the message
+                    await update.callback_query.message.delete()
+                    await context.bot.send_photo(
+                        chat_id=update.effective_chat.id,
+                        photo=invoice['picture'],
+                        caption=message_text,
+                        reply_markup=reply_markup,
+                        parse_mode='Markdown'
+                    )
+                else:
+                    # If this is the first message
+                    await update.message.reply_photo(
+                        photo=invoice['picture'],
+                        caption=message_text,
+                        reply_markup=reply_markup,
+                        parse_mode='Markdown'
+                    )
+            except Exception as e:
+                # If photo fails, send as text message
+                print(f"Error sending photo: {e}")
+                if update.callback_query:
+                    await update.callback_query.edit_message_text(
+                        text=f"⚠️ Could not load image\n{message_text}",
+                        reply_markup=reply_markup,
+                        parse_mode='Markdown'
+                    )
+                else:
+                    await update.message.reply_text(
+                        text=f"⚠️ Could not load image\n{message_text}",
+                        reply_markup=reply_markup,
+                        parse_mode='Markdown'
+                    )
         else:
-            # No picture available, send text only
+            # No picture, send as text
             if update.callback_query:
                 await update.callback_query.edit_message_text(
-                    text=invoice_text,
+                    text=message_text,
                     reply_markup=reply_markup,
-                    parse_mode='HTML'
+                    parse_mode='Markdown'
                 )
             else:
                 await update.message.reply_text(
-                    text=invoice_text,
+                    text=message_text,
                     reply_markup=reply_markup,
-                    parse_mode='HTML'
+                    parse_mode='Markdown'
                 )
-    except Exception as e:
-        # Fallback to text if image fails to load
-        error_text = f"{invoice_text}\n\n⚠️ <i>Failed to load invoice picture</i>"
-        if update.callback_query:
-            await update.callback_query.edit_message_text(
-                text=error_text,
-                reply_markup=reply_markup,
-                parse_mode='HTML'
-            )
-        else:
-            await update.message.reply_text(
-                text=error_text,
-                reply_markup=reply_markup,
-                parse_mode='HTML'
-            )
-
-def format_invoice_info(invoice, current_num, total_num):
-    """Format invoice information for display"""
-    invoice_id = invoice.get('id', 'N/A')
-    amount = invoice.get('amount', 'N/A')
-    claims = invoice.get('claims', 'No claims<something is wrong>')
-
     
-    return f"""
-📋 <b>Invoice {current_num} of {total_num}</b>
-🆔 <b>ID:</b> {invoice_id}
-💰 <b>Amount:</b> ${amount}
-📝 <b>Claims:</b> {claims}
-    """.strip()
-
-def create_invoice_keyboard(current_index, total_invoices):
-    """Create inline keyboard for invoice approval"""
-    keyboard = []
-    
-    # Approval buttons
-    keyboard.append([
-        InlineKeyboardButton("✅ Approve", callback_data=f"approve_invoice_{current_index}"),
-        InlineKeyboardButton("❌ Reject", callback_data=f"reject_invoice_{current_index}")
-    ])
-    
-    # Navigation buttons
-    nav_buttons = []
-    if current_index > 0:
-        nav_buttons.append(InlineKeyboardButton("⬅️ Previous", callback_data=f"prev_invoice_{current_index}"))
-    
-    if current_index < total_invoices - 1:
-        nav_buttons.append(InlineKeyboardButton("➡️ Next", callback_data=f"next_invoice_{current_index}"))
-    
-    if nav_buttons:
-        keyboard.append(nav_buttons)
-    
-    # Skip and exit buttons
-    keyboard.append([
-        InlineKeyboardButton("⏭️ Skip", callback_data=f"skip_invoice_{current_index}"),
-        InlineKeyboardButton("🚪 Exit", callback_data="exit_invoice_review")
-    ])
-    
-    return keyboard
-
-async def handle_invoice_callback(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle callback queries from invoice review"""
-    query = update.callback_query
-    await query.answer()
-    
-    data = query.data
-    invoices = context.user_data.get('invoices', [])
-    current_index = context.user_data.get('current_invoice_index', 0)
-    
-    if data.startswith('approve_invoice_'):
-        index = int(data.split('_')[-1])
-        await approve_invoice(update, context, index)
-    
-    elif data.startswith('reject_invoice_'):
-        index = int(data.split('_')[-1])
-        await reject_invoice(update, context, index)
-    
-    elif data.startswith('skip_invoice_'):
-        index = int(data.split('_')[-1])
-        # Move to next invoice
-        next_index = index + 1
-        if next_index < len(invoices):
-            await show_invoice(update, context, next_index)
-        else:
-            await query.edit_message_text("✅ All invoices reviewed!")
-    
-    elif data.startswith('prev_invoice_'):
-        index = int(data.split('_')[-1])
-        prev_index = index - 1
-        if prev_index >= 0:
-            await show_invoice(update, context, prev_index)
-    
-    elif data.startswith('next_invoice_'):
-        index = int(data.split('_')[-1])
-        next_index = index + 1
-        if next_index < len(invoices):
-            await show_invoice(update, context, next_index)
-    
-    elif data == 'exit_invoice_review':
-        await query.edit_message_text("👋 Invoice review session ended.")
-        # Clear user data
-        context.user_data.pop('invoices', None)
-        context.user_data.pop('current_invoice_index', None)
-
-async def approve_invoice(update: Update, context: ContextTypes.DEFAULT_TYPE, index: int):
-    """Approve an invoice"""
-    invoices:list = context.user_data.get('invoices', [])
-    if index >= len(invoices):
-        return
-    
-    invoice = invoices[index]
-    invoice_id = invoice.get('id')
-    
-    try:
-        # Update invoice status in database
-        approve_invoice = db.approve_invoice(invoice_id)
-        if not approve_invoice:
-            await update.callback_query.edit_message_text(
-                f"❌ Error approving invoice #{invoice_id}."
-            )
-            return
-
-        # Remove from current list
-        invoices.pop(index)
-        context.user_data['invoices'] = invoices
+    async def handle_approval_callback(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Handle button clicks for approval/skip/cancel"""
+        query = update.callback_query
+        await query.answer()
         
-        await update.callback_query.edit_message_text(
-            f"✅ Invoice #{invoice_id} approved successfully!"
-        )
+        data = query.data
+        current_index = context.user_data.get('current_index', 0)
+        invoices = context.user_data.get('invoices', [])
         
-        # Show next invoice if available
-        if index < len(invoices):
-            await show_invoice(update, context, index)
-        elif invoices:
-            await show_invoice(update, context, index - 1)
-        else:
-            await context.bot.send_message(
-                chat_id=update.effective_chat.id,
-                text="🎉 All invoices have been reviewed!"
-            )
-    except Exception as e:
-        await update.callback_query.edit_message_text(
-            f"❌ Error approving invoice: {str(e)}"
-        )
-
-async def reject_invoice(update: Update, context: ContextTypes.DEFAULT_TYPE, index: int):
-    """Reject an invoice"""
-    invoices = context.user_data.get('invoices', [])
-    if index >= len(invoices):
-        return
+        if data.startswith("approve_"):
+            # Extract invoice ID and approve it
+            invoice_id = int(data.split("_")[1])
+            current_invoice = invoices[current_index]
+            
+            # Approve the invoice
+            result = self.db.approve_invoice(invoice_id)
+            
+            if result:
+                # Create claim invoices if claims exist
+                if current_invoice.get('claims'):
+                    self.db.create_claim_invoice(invoice_id, current_invoice['claims'])
+                
+                await query.edit_message_text(
+                    f"✅ Invoice #{invoice_id} approved successfully!"
+                )
+                
+                # Wait a moment then show next invoice
+                await asyncio.sleep(1)
+                next_index = current_index + 1
+                if next_index < len(invoices):
+                    await self.show_invoice(update, context, next_index)
+                    return REVIEWING_INVOICE
+                else:
+                    await context.bot.send_message(
+                        chat_id=update.effective_chat.id,
+                        text="🎉 All invoices reviewed! Approval process complete."
+                    )
+                    return ConversationHandler.END
+            else:
+                await query.edit_message_text(
+                    f"❌ Error approving invoice #{invoice_id}. Please try again."
+                )
+                return ConversationHandler.END
+        
+        elif data == "skip":
+            # Move to next invoice
+            next_index = current_index + 1
+            if next_index < len(invoices):
+                await self.show_invoice(update, context, next_index)
+                return REVIEWING_INVOICE
+            else:
+                await query.edit_message_text("🎉 All invoices reviewed!")
+                return ConversationHandler.END
+        
+        elif data == "cancel":
+            await query.edit_message_text("❌ Invoice approval cancelled.")
+            return ConversationHandler.END
+        
+        return REVIEWING_INVOICE
     
-    invoice = invoices[index]
-    invoice_id = invoice.get('id')
-    
-    try:
-        # Update invoice status in database
-        db.update_invoice_status(invoice_id, 'rejected')
-        
-        # Remove from current list
-        invoices.pop(index)
-        context.user_data['invoices'] = invoices
-        
-        await update.callback_query.edit_message_text(
-            f"❌ Invoice #{invoice_id} rejected."
-        )
-        
-        # Show next invoice if available
-        if index < len(invoices):
-            await show_invoice(update, context, index)
-        elif invoices:
-            await show_invoice(update, context, index - 1)
-        else:
-            await context.bot.send_message(
-                chat_id=update.effective_chat.id,
-                text="🎉 All invoices have been reviewed!"
-            )
-    except Exception as e:
-        await update.callback_query.edit_message_text(
-            f"❌ Error rejecting invoice: {str(e)}"
-        )
+    async def cancel_approval(self, update: Update, context: ContextTypes.DEFAULT_TYPE):
+        """Cancel the approval process"""
+        await update.message.reply_text("Invoice approval process cancelled.")
+        return ConversationHandler.END
 
-# Don't forget to add the callback handler to your application:
-# application.add_handler(CallbackQueryHandler(handle_invoice_callback))
+# Create the conversation handler
+def create_approval_conversation_handler(db):
+    handler = InvoiceApprovalHandler(db)
+    
+    return ConversationHandler(
+        entry_points=[CommandHandler("approve_invoices", handler.approve_invoices_command)],
+        states={
+            REVIEWING_INVOICE: [
+                CallbackQueryHandler(handler.handle_approval_callback)
+            ]
+        },
+        fallbacks=[CommandHandler("cancel", handler.cancel_approval)],
+        per_chat=True,
+        per_user=True
+    )
+
+# You'll need to add this import at the top of your file
+approval_conversation = create_approval_conversation_handler(db)

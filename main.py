@@ -5,17 +5,16 @@ import asyncio
 import threading
 from flask import Flask, request, jsonify
 from telegram import Update, Bot
-from telegram.ext import Application, CommandHandler, MessageHandler, filters, CallbackQueryHandler
+from telegram.ext import Application, CommandHandler, MessageHandler, filters
 from bot.config import TELEGRAM_BOT_TOKEN
 from bot.handlers.add_listing import add_listing_command
-from bot.handlers.approve_invoice import handle_invoice_callback
+from bot.handlers.approve_invoice import approval_conversation
 from bot.handlers.debugger import debug_all_messages
 from bot.handlers.edit_user import edit_user_conversation
 from bot.handlers.start import start_command
 from bot.handlers.list import list_command
 from bot.handlers.invoice import invoice_conversation
 from bot.handlers.claim import claim_command
-from bot.handlers.external_invoice import external_invoice_command
 from bot.handlers.unclaim import unclaim_command
 from pythonjsonlogger import jsonlogger
 
@@ -66,7 +65,7 @@ async def error_handler(update, context):
     # Optional: send a friendly message to the user
     if update and update.effective_chat:
         await update.effective_chat.send_message(
-            "Oops! Something went wrong. The bot owner has been notified."
+            "Oops! Something went wrong. The bot owner has been notified. /cancel to reset the bot and try again"
         )
 
 def initialize_bot():
@@ -108,9 +107,8 @@ def initialize_bot():
             application.add_handler(invoice_conversation)
             application.add_handler(MessageHandler(filters.TEXT & filters.Regex(claim_pattern), claim_command))
             application.add_handler(MessageHandler(filters.TEXT & filters.Regex(unclaim_pattern), unclaim_command))
-            application.add_handler(CommandHandler("external_invoice", external_invoice_command, filters=private_only)) 
             application.add_handler(CommandHandler("add_listing", add_listing_command, filters=private_only))
-            application.add_handler(CallbackQueryHandler(handle_invoice_callback))
+            application.add_handler(approval_conversation,filters=private_only)
             # Uncomment if needed for debugging
             # application.add_handler(MessageHandler(filters.ALL, debug_all_messages))
             
