@@ -177,7 +177,7 @@ class SupabaseClient:
     def approve_invoice(self, invoice_id: int):
         """Approve an invoice"""
         try:
-            response = self.client.table('Invoices').update({'approved': True}).eq('invoice_id', invoice_id).execute()
+            response = self.client.table('Invoices').update({'approved': True}).eq('id', invoice_id).execute()
             return response.data
         except Exception as e:
             print(f"Error approving invoice: {e}")
