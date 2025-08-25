@@ -135,8 +135,12 @@ Invoice {index + 1} of {len(invoices)}
             if result:
                 # Create claim invoices if claims exist
                 if current_invoice.get('claims'):
-                    self.db.create_claim_invoice(invoice_id, current_invoice['claims'])
-                
+                    try:
+                        self.db.create_claim_invoice(invoice_id, current_invoice['claims'])
+                        self.db.mark_claims_as_paid(current_invoice['claims'])
+                    except Exception as e:
+                        print(f"Error creating claim invoice or marking claims as paid: {e}")
+
                 await query.edit_message_text(
                     f"✅ Invoice #{invoice_id} approved successfully!"
                 )

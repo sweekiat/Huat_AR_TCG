@@ -156,6 +156,16 @@ class SupabaseClient:
         except Exception as e:
             print(f"Error removing claim: {e}")
             return None
+    def mark_claims_as_paid(self, claims:str):
+        """Mark claims as paid"""
+        claim_list = claims.split(",")  # Split the claims string into a list
+        try:
+            response = self.client.table('Claims').update({'paid': True}).in_('claim_id', claim_list).execute()
+            return response.data
+        except Exception as e:
+            print(f"Error marking claims as paid: {e}")
+            return None
+
 #### Invoices table ####
     def create_new_invoice(self, invoice_object: dict):
         """Create a new invoice"""
