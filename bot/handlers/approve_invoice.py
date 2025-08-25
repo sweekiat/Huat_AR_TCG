@@ -3,7 +3,8 @@ from telegram.ext import (
     ContextTypes, 
     ConversationHandler, 
     CommandHandler, 
-    CallbackQueryHandler
+    CallbackQueryHandler,
+    filters
 )
 import asyncio
 from bot.database.supabase_client import db
@@ -56,7 +57,7 @@ Invoice {index + 1} of {len(invoices)}
         # Create inline keyboard
         keyboard = [
             [
-                InlineKeyboardButton("✅ Approve", callback_data=f"approve_{invoice['invoice_id']}"),
+                InlineKeyboardButton("✅ Approve", callback_data=f"approve_{invoice['id']}"),
                 InlineKeyboardButton("⏭️ Skip", callback_data="skip")
             ],
             [InlineKeyboardButton("❌ Cancel", callback_data="cancel")]
@@ -184,7 +185,7 @@ def create_approval_conversation_handler(db):
     handler = InvoiceApprovalHandler(db)
     
     return ConversationHandler(
-        entry_points=[CommandHandler("approve_invoices", handler.approve_invoices_command)],
+        entry_points=[CommandHandler("approve_invoices", handler.approve_invoices_command, filters=filters.ChatType.PRIVATE)],
         states={
             REVIEWING_INVOICE: [
                 CallbackQueryHandler(handler.handle_approval_callback)
