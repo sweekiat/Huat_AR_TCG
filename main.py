@@ -97,18 +97,16 @@ def initialize_bot():
             application.add_error_handler(error_handler)
 
             # Add all your handlers
-            private_only = filters.ChatType.PRIVATE
-            # Add this in your initialization function before adding handlers
             claim_pattern = re.compile(r'^claim(\s+\d+)?$', re.IGNORECASE)
             unclaim_pattern = re.compile(r'^unclaim(\s+\d+)?$', re.IGNORECASE)
-            application.add_handler(CommandHandler("start", start_command, filters=private_only))
-            application.add_handler(CommandHandler("list", list_command, filters=private_only))
+            application.add_handler(CommandHandler("start", start_command))
+            application.add_handler(CommandHandler("list", list_command))
             application.add_handler(edit_user_conversation) 
             application.add_handler(invoice_conversation)
             application.add_handler(MessageHandler(filters.TEXT & filters.Regex(claim_pattern), claim_command))
             application.add_handler(MessageHandler(filters.TEXT & filters.Regex(unclaim_pattern), unclaim_command))
-            application.add_handler(CommandHandler("add_listing", add_listing_command, filters=private_only))
-            application.add_handler(approval_conversation,filters=private_only)
+            application.add_handler(CommandHandler("add_listing", add_listing_command, ))
+            application.add_handler(approval_conversation)
             # Uncomment if needed for debugging
             # application.add_handler(MessageHandler(filters.ALL, debug_all_messages))
             
