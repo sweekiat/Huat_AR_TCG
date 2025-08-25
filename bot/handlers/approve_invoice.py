@@ -1,3 +1,4 @@
+import datetime
 from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import (
     ContextTypes, 
@@ -43,12 +44,23 @@ class InvoiceApprovalHandler:
         
         invoice = invoices[index]
         context.user_data['current_index'] = index
-        
+        invoice_date = invoice.get('created_at','N/A')
+         # Format the date to a simpler format
+        if invoice_date and invoice_date != 'Unknown Date':
+            try:
+                parsed_date = datetime.fromisoformat(invoice_date.replace('Z', '+00:00'))
+                # Convert to Singapore time (UTC+8)
+                singapore_date = parsed_date.replace(tzinfo=None) + datetime.timedelta(hours=8)
+                # Format to readable string
+                invoice_date = singapore_date.strftime('%Y-%m-%d %H:%M')
+            except:
+                # Keep original if parsing fai
+                pass
         # Create message text with invoice details
         message_text = f"""
 📋 **Invoice #{invoice.get('id')}**
 💰 Amount: ${invoice.get('amount', 'N/A')}
-📅 Date: {invoice.get('created_at', 'N/A')}
+📅 Date: {invoice_date}
 🏷️ Claims: {invoice.get('claims', 'N/A')}
 
 Invoice {index + 1} of {len(invoices)}
@@ -140,10 +152,7 @@ Invoice {index + 1} of {len(invoices)}
                         self.db.mark_claims_as_paid(current_invoice['claims'])
                     except Exception as e:
                         print(f"Error creating claim invoice or marking claims as paid: {e}")
-
-                await query.edit_message_text(
-                    f"✅ Invoice #{invoice_id} approved successfully!"
-                )
+                await query.edit_message_caption(f"✅ Invoice #{invoice_id} approved successfully!")
                 
                 # Wait a moment then show next invoice
                 await asyncio.sleep(1)

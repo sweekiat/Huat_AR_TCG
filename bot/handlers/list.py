@@ -34,7 +34,7 @@ async def list_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 # Format to readable string
                 claim_date = singapore_date.strftime('%Y-%m-%d %H:%M')
             except:
-                # Keep original if parsing fails
+                # Keep original if parsing fai
                 pass
         items_text += f"{i}. {item_name}, {set_name} (claimed: {claim_date}) x {quantity}\n"
         items_text += f"   Price: {price}\n"
