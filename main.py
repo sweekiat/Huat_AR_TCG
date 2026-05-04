@@ -18,6 +18,8 @@ from bot.handlers.claim import claim_command
 from bot.handlers.unclaim import unclaim_command
 from pythonjsonlogger import jsonlogger
 
+from bot.handlers.yours import yours_command
+
 # Enable logging
 formatter = jsonlogger.JsonFormatter(
     '%(asctime)s %(levelname)s %(name)s %(message)s'
@@ -103,7 +105,6 @@ def initialize_bot():
             application.add_handler(CommandHandler("start", start_command, filters=private_only))
             application.add_handler(CommandHandler("list", list_command, filters=private_only))
             application.add_handler(edit_user_conversation) 
-            application.add_handler(invoice_conversation)
             application.add_handler(MessageHandler(filters.TEXT & filters.Regex(claim_pattern), claim_command))
             application.add_handler(MessageHandler(filters.TEXT & filters.Regex(unclaim_pattern), unclaim_command))
             application.add_handler(CommandHandler("add_listing", add_listing_command, filters=private_only))

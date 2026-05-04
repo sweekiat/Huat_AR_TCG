@@ -1,5 +1,5 @@
 from supabase import create_client, Client
-from bot.config import SUPABASE_URL, SUPABASE_KEY, SUPABASE_SERVICE_KEY
+from bot.config import SUPABASE_URL, SUPABASE_SERVICE_KEY
 
 class SupabaseClient:
     def __init__(self):
