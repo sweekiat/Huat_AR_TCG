@@ -6,19 +6,19 @@ import threading
 from flask import Flask, request, jsonify
 from telegram import Update, Bot
 from telegram.ext import Application, CommandHandler, MessageHandler, filters
-from bot.config import TELEGRAM_BOT_TOKEN
+from telethon import TelegramClient
+from bot.config import TELEGRAM_BOT_TOKEN, TELEGRAM_API_HASH, TELEGRAM_API_ID
 from bot.handlers.add_listing import add_listing_command
 from bot.handlers.approve_invoice import approval_conversation
 from bot.handlers.debugger import debug_all_messages
 from bot.handlers.edit_user import edit_user_conversation
 from bot.handlers.start import start_command
 from bot.handlers.list import list_command
-from bot.handlers.invoice import invoice_conversation
 from bot.handlers.claim import claim_command
 from bot.handlers.unclaim import unclaim_command
+from bot.handlers.forward_messages import forward_message   
 from pythonjsonlogger import jsonlogger
-
-from bot.handlers.yours import yours_command
+from functools import partial
 
 # Enable logging
 formatter = jsonlogger.JsonFormatter(
@@ -37,6 +37,9 @@ logger = logging.getLogger(__name__)
 
 # Create Flask app
 app = Flask(__name__)
+
+# Create Telegram client
+client = TelegramClient('session_name', TELEGRAM_API_ID, TELEGRAM_API_HASH)
 
 # Global variables for bot management
 application = None
@@ -97,6 +100,7 @@ def initialize_bot():
                 .build()
             )
             application.add_error_handler(error_handler)
+            forward_handler = partial(forward_message, client=client)
             # Add all your handlers
             private_only = filters.ChatType.PRIVATE
             # Add this in your initialization function before adding handlers
@@ -109,6 +113,7 @@ def initialize_bot():
             application.add_handler(MessageHandler(filters.TEXT & filters.Regex(unclaim_pattern), unclaim_command))
             application.add_handler(CommandHandler("add_listing", add_listing_command, filters=private_only))
             application.add_handler(approval_conversation)
+            application.add_handler(CommandHandler("forward", forward_handler, filters=private_only))
             # Uncomment if needed for debugging
             # application.add_handler(MessageHandler(filters.ALL, debug_all_messages))
             
