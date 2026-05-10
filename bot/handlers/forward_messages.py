@@ -21,18 +21,13 @@ async def forward_receive(update, context):
     client = context.bot_data["telethon_client"]
     msg = update.message
     if msg.forward_origin:
-        source = msg  # user sent a forwarded message alongside /forward
-    elif msg.reply_to_message:
-        source = msg.reply_to_message  # user replied to a message
+        source = msg.forward_origin  # user sent a forwarded message alongside /forward
+    else:
+        await msg.reply_text("❌ Please forward a message.")
+        return ConversationHandler.END
     try:
-        # await client.forward_messages(
-        #     entity='kyliesk123',
-        #     messages=source.message_id,
-        #     from_peer=source.chat_id,
-        #     top_msg_id=channels["BakaDegenTCG"]["topics"]["Marketplace"]
-        # )
         await client(functions.messages.ForwardMessagesRequest(
-        from_peer=source.chat_id,
+        from_peer=source.chat.id,
         id=[source.message_id],        # must be a list
         to_peer='kyliesk123',
         # top_msg_id=channels["BakaDegenTCG"]["topics"]["Marketplace"],  
