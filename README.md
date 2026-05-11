@@ -1,2 +1,2 @@
 # Huat_AR_TCG
-A TCG trading bot to manage my inventory and customer orders
+A bot that forwards messages to other groups
