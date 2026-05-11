@@ -36,7 +36,7 @@ async def forward_receive(update, context):
             random_id=[random.randint(0, 2**63)]  # required — telethon won't auto-generate this
                 ))
         except Exception as e:
-            await msg.reply_text(f"❌ Error forwarding message: {e}")
+            await msg.reply_text(f"❌ Error forwarding message: {e} (for group {group})")
             pass
         
     await msg.reply_text("✅ Message forwarded successfully!")
