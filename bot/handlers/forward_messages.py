@@ -26,14 +26,15 @@ async def forward_receive(update, context):
         await msg.reply_text("❌ Please forward a message.")
         return ConversationHandler.END
     try:
-        await client(functions.messages.ForwardMessagesRequest(
-        from_peer=source.chat.id,
-        id=[source.message_id],        # must be a list
-        to_peer='kyliesk123',
-        # top_msg_id=channels["BakaDegenTCG"]["topics"]["Marketplace"],  
-        top_msg_id=1,  # ← topic ID goes here
-        random_id=[random.randint(0, 2**63)]  # required — telethon won't auto-generate this
-))
+        for group in channels:
+            await client(functions.messages.ForwardMessagesRequest(
+            from_peer=source.chat.id,
+            id=[source.message_id],        # must be a list
+            to_peer=group,
+            top_msg_id=next(iter(channels[group]["topics"].values())),
+            # top_msg_id=1,  # ← topic ID goes here
+            random_id=[random.randint(0, 2**63)]  # required — telethon won't auto-generate this
+                ))
         await msg.reply_text("✅ Message forwarded successfully!")
     except Exception as e:
         await msg.reply_text(f"❌ Error forwarding message: {e}")

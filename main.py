@@ -28,6 +28,7 @@ async def lifespan(app: FastAPI):
     private_only = filters.ChatType.PRIVATE
     ptb_app.add_handler(CommandHandler("start", start_command, filters=private_only))
     ptb_app.add_handler(get_forward_handler(private_only))
+    # TODO add /list /find here as well I need modularity and to show user what groups they added and what else they want to add
 
     await ptb_app.initialize()
     await ptb_app.start()

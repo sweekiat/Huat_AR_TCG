@@ -1,29 +1,45 @@
 from telegram import Update
-from telegram.ext import ContextTypes
-from bot.database.supabase_client import db
+from telegram.ext import CommandHandler, ContextTypes, ConversationHandler, MessageHandler, filters
+from telethon import functions
 from bot.util.admin_wrapper import admin_required
 
+WAITING_FOR_MESSAGE = 1
 @admin_required
-async def add_listing_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Handle /add_listing command"""
-    # Get listing data from command arguments
-    if len(context.args) < 3:
-        await update.message.reply_text("Usage: /add_listing <card_code> <listed_quantity> <price>")
-        return
+async def find_group_id(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    await update.message.reply_text("Please Choose a group.")
+    return WAITING_FOR_MESSAGE
 
-    card_code = context.args[0]
-    try:
-        listed_quantity = int(context.args[1])
-        price = float(context.args[2])
-    except ValueError:
-        await update.message.reply_text("Invalid quantity or price.")
-        return
-
-    # Add listing to database
-    listing_data = db.add_listing(card_code, listed_quantity, price)
-    if listing_data:
-        await update.message.reply_text(f"Listing added successfully:\n #{listing_data['listing_id']}\n{listing_data['card']}\n{listing_data['card_code']}\nQty: {listing_data['listed_quantity']}\nPrice: ${listing_data['price']}")
+async def forward_receive(update, context):
+    client = context.bot_data["telethon_client"]
+    msg = update.message
+    if msg.forward_origin:
+        source = msg.forward_origin  # user sent a forwarded message alongside /forward
     else:
-        await update.message.reply_text("Failed to add listing.")
+        await msg.reply_text("❌ Please forward a message.")
+        return ConversationHandler.END
+    try:
+        await client
+        await msg.reply_text("✅ Message forwarded successfully!")
+    except Exception as e:
+        await msg.reply_text(f"❌ Error forwarding message: {e}")
+    return ConversationHandler.END
+
+async def forward_cancel(update, context):
+    await update.message.reply_text("Cancelled.")
+    return ConversationHandler.END
+
+
+
+def get_forward_handler(private_only):
+    return ConversationHandler(
+        entry_points=[CommandHandler("forward", forward_start, filters=private_only)],
+        states={
+            WAITING_FOR_MESSAGE: [
+                MessageHandler(filters.ALL & private_only, forward_receive)
+            ],
+        },
+        fallbacks=[CommandHandler("cancel", forward_cancel)],
+    )
+
     
     
