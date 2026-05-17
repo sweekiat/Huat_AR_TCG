@@ -3,9 +3,10 @@ from fastapi import FastAPI, Request
 from telegram import Update
 from telegram.ext import Application, CommandHandler, filters
 from telethon import TelegramClient
-from bot.config import TELEGRAM_BOT_TOKEN, TELEGRAM_API_ID, TELEGRAM_API_HASH
+from bot.config import TELEGRAM_BOT_TOKEN, TELEGRAM_API_ID, TELEGRAM_API_HASH, TELETHON_SESSION_STRING
 from bot.handlers.start import start_command
 from bot.handlers.forward_messages import get_forward_handler
+from telethon.sessions import StringSession
 
 # Globals — no threads, no loops, just objects
 ptb_app: Application = None
@@ -17,7 +18,8 @@ async def lifespan(app: FastAPI):
     global ptb_app, telethon_client
 
     # --- startup ---
-    telethon_client = TelegramClient('session_name', TELEGRAM_API_ID, TELEGRAM_API_HASH)
+    # telethon_client = TelegramClient('session_name', TELEGRAM_API_ID, TELEGRAM_API_HASH)
+    telethon_client = TelegramClient(StringSession(TELETHON_SESSION_STRING), TELEGRAM_API_ID, TELEGRAM_API_HASH)
     await telethon_client.connect()
     if not await telethon_client.is_user_authorized():
         raise RuntimeError("Telethon client not authorized")
