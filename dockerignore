@@ -1,0 +1,6 @@
+__pycache__/
+*.pyc
+*.pyo
+.env
+*.session          # IMPORTANT: don't bake Telethon session into image
+.git
