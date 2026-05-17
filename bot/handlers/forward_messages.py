@@ -30,7 +30,7 @@ async def forward_receive(update, context):
             await client(functions.messages.ForwardMessagesRequest(
             from_peer=source.chat.id,
             id=[source.message_id],        # must be a list
-            to_peer=group,
+            to_peer=channels[group]["id"],
             top_msg_id=next(iter(channels[group]["topics"].values())),
             # top_msg_id=1,  # ← topic ID goes here
             random_id=[random.randint(0, 2**63)]  # required — telethon won't auto-generate this
