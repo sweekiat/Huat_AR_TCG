@@ -1,6 +1,5 @@
 from telegram import Update
 from telegram.ext import ContextTypes
-from bot.database.supabase_client import db
 
 async def start_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Handle /start command"""
