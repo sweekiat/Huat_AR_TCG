@@ -196,7 +196,7 @@ async def forward_receive(update, context):
                 ))
         except Exception as e:
             await msg.reply_text(f"❌ Error forwarding message: {e} (for group {group})")
-            pass
+            continue
         
     await msg.reply_text("✅ Message forwarded successfully!")
     return ConversationHandler.END
